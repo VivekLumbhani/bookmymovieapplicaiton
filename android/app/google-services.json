@@ -1,0 +1,127 @@
+{
+  "project_info": {
+    "project_number": "90385068552",
+    "firebase_url": "https://bookmymovie-70dd7-default-rtdb.firebaseio.com",
+    "project_id": "bookmymovie-70dd7",
+    "storage_bucket": "bookmymovie-70dd7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:90385068552:android:3f2e5d7e2aea62d0a357bd",
+        "android_client_info": {
+          "package_name": "com.example.bookmymovie"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "90385068552-bhjeh4qscm3a63bk48apn1fraqort8co.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.bookmymovie",
+            "certificate_hash": "d3cf1d111dacadb2712f1aadaeba7bb5c3a01bc9"
+          }
+        },
+        {
+          "client_id": "90385068552-k1hcd0o35qkqiks707dpvtomdfjc95ch.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC8AHaaDX0kv0ROS9NVqxC82Tb7pW5NXvY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "90385068552-1l6rrcqa6k8jdfl8j5211340mn2ll15m.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "90385068552-fbm4d97aa6sbnavfvs86r7vcktd2javf.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.movieticketbookingapp"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:90385068552:android:fba24b930fd3da85a357bd",
+        "android_client_info": {
+          "package_name": "com.example.movieticketbookingapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "90385068552-k1hcd0o35qkqiks707dpvtomdfjc95ch.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC8AHaaDX0kv0ROS9NVqxC82Tb7pW5NXvY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "90385068552-1l6rrcqa6k8jdfl8j5211340mn2ll15m.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "90385068552-fbm4d97aa6sbnavfvs86r7vcktd2javf.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.movieticketbookingapp"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:90385068552:android:cee3e6b5e751b3c6a357bd",
+        "android_client_info": {
+          "package_name": "com.example.nookmyseatapplication"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "90385068552-k1hcd0o35qkqiks707dpvtomdfjc95ch.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC8AHaaDX0kv0ROS9NVqxC82Tb7pW5NXvY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "90385068552-1l6rrcqa6k8jdfl8j5211340mn2ll15m.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "90385068552-fbm4d97aa6sbnavfvs86r7vcktd2javf.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.movieticketbookingapp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
