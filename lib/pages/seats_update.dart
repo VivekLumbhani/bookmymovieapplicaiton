@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:nookmyseatapplication/pages/messages.dart';
 import 'package:nookmyseatapplication/snaks.dart';
 
 class SeatsUpdate extends StatefulWidget {
@@ -50,8 +51,12 @@ class _SeatLayoutTryState extends State<SeatsUpdate> {
   String? movieName;
   String? cinemaName;
   int? numsCalc;
+  String? allSeatsofbookings;
 
 
+  Map<String, String> seatUserNameMap = {};
+
+  Map<String, String> seatUserEmailMap = {};
   @override
   void initState() {
     super.initState();
@@ -75,6 +80,29 @@ class _SeatLayoutTryState extends State<SeatsUpdate> {
     final idtochek = widget.movieename;
 
     FirebaseFirestore.instance
+        .collection('personalbooking')
+        .where('movieId', isEqualTo: idtochek)
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      if (querySnapshot.docs.isNotEmpty) {
+        for (var doc in querySnapshot.docs) {
+          String useEmail = doc['username'];
+          String selectedSeats = doc['selectedSeats'];
+          String nameoftheuser = doc['nameoftheuser'];
+
+          List<String> seatList = jsonDecode(selectedSeats).cast<String>();
+
+          // Assign each seat to the corresponding user name
+          for (String seat in seatList) {
+            seatUserNameMap[seat] = nameoftheuser;
+            seatUserEmailMap[seat]=useEmail;
+          }
+        }
+      }
+    });
+
+
+    FirebaseFirestore.instance
         .collection('bookings')
         .where('movieId', isEqualTo: idtochek)
         .get()
@@ -83,6 +111,7 @@ class _SeatLayoutTryState extends State<SeatsUpdate> {
         List<String> reserved = [];
         for (var doc in querySnapshot.docs) {
           String seats = doc['selectedSeats'];
+          allSeatsofbookings = doc["selectedSeats"]; // Assigning value here
           List<String> selectedSeatss = jsonDecode(seats).cast<String>();
 
           for (var seat in selectedSeatss) {
@@ -98,7 +127,12 @@ class _SeatLayoutTryState extends State<SeatsUpdate> {
 
         });
       }
+
+      // Now you can safely access allSeatsofbookings here
+      print("all reserved seats are $reservedSeats");
+      print("upper part price ${upperPart}");
     });
+
     print("all reserved seats are $reservedSeats");
     print("upper part price ${upperPart}");
 
@@ -181,9 +215,14 @@ class _SeatLayoutTryState extends State<SeatsUpdate> {
                   child: Center(
                     child: ElevatedButton(
                       onPressed: () {
-                        print("selected seats $selectedSeats and price is $totalBill");
+                        print("selected seats $selectedSeats and all seasts were $allSeatsofbookings  price is $totalBill");
 
 
+                        print("selected seats ${selectedSeats.runtimeType} and all seasts were ${allSeatsofbookings.runtimeType}  price is ${totalBill.runtimeType}");
+
+
+
+                      },
                         // Navigator.push(
                         //   context,
                         //   MaterialPageRoute(
@@ -200,8 +239,6 @@ class _SeatLayoutTryState extends State<SeatsUpdate> {
                         //   ),
                         // );
 
-
-                      },
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
                       ),
@@ -352,6 +389,9 @@ class _SeatLayoutTryState extends State<SeatsUpdate> {
           double totalBill = calculateTotalBill();
           print('New total bill after deselection: $totalBill');
           this.totalBill = totalBill;
+
+          // Update button height based on selected seats
+          buttonHeight = selectedSeats.isNotEmpty ? 50.0 : 0.0;
         }
       } else {
         // If not already selected, allow selection if there are fewer than 2 selected seats
@@ -364,11 +404,11 @@ class _SeatLayoutTryState extends State<SeatsUpdate> {
           double totalBill = calculateTotalBill();
           print('New total bill after selection: $totalBill');
           this.totalBill = totalBill;
+
+          // Update button height based on selected seats
+          buttonHeight = selectedSeats.isNotEmpty ? 50.0 : 0.0;
         }
       }
-
-      // Update button height based on selected seats
-      buttonHeight = selectedSeats.isNotEmpty ? 50.0 : 0.0;
     });
   }
 
@@ -377,14 +417,47 @@ class _SeatLayoutTryState extends State<SeatsUpdate> {
       String seatKey = '$rowIndex-$seatIndex-$partType';
 
       if (isSeatReserved(seatKey)) {
+
+        String userName = seatUserNameMap[seatKey] ?? 'Unknown';
+        String userEmail = seatUserEmailMap[seatKey] ?? 'Unknown';
+
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Warning'),
+              content: Text('You will be chatting with unknown user,BE AWARE'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('No'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    // Navigate to the new screen
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => messagesScreen(name: userName, email: userEmail),
+                      ),
+                    );
+                  },
+                  child: Text('Yes'),
+                ),
+              ],
+            );
+          },
+        );
         return;
       }
 
+
       bool isSeatSelected = selectedSeats.contains(seatKey);
 
-
       if (!isSeatSelected && selectedSeats.length + 1 > finalseatsbyusertocheck!.length) {
-        // Charge for the seat
         double seatPrice = partType == 'upper'
             ? double.parse(upperPart?['price'] ?? '0.0')
             : double.parse(lowerPart?['price'] ?? '0.0');
@@ -406,7 +479,6 @@ class _SeatLayoutTryState extends State<SeatsUpdate> {
         selectedSeats.add(seatKey);
       }
 
-      // Update button height based on selected seats
       buttonHeight = selectedSeats.isNotEmpty ? 50.0 : 0.0;
     });
   }
@@ -436,13 +508,16 @@ class _SeatLayoutTryState extends State<SeatsUpdate> {
         double deselectedSeatPrice = seatInfo[2] == 'upper'
             ? double.parse(upperPart?['price'] ?? '0.0')
             : double.parse(lowerPart?['price'] ?? '0.0');
-        totalBill -= deselectedSeatPrice;
+
+        // Check if the deselected seat was previously charged
+        if (selectedSeats.contains(deselectedSeat)) {
+          totalBill -= deselectedSeatPrice;
+        }
       }
     }
 
     return totalBill;
   }
-
 
 
 }

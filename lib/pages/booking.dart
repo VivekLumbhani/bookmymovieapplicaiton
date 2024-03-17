@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:nookmyseatapplication/pages/services/shared_pref.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class bookings extends StatefulWidget {
@@ -33,6 +34,8 @@ class _bookings extends State<bookings> {
   String? priceofseat;
   String? seatingArrangement;
   double totalCharge = 0.0;
+  final nameoftheuser=SharedPreferenceHelper().getUserName();
+
 
   List<bool> selectedSeats = List.generate(100, (index) => false);
   List<int> selectedSeatIndices = [];
@@ -208,6 +211,7 @@ class _bookings extends State<bookings> {
                                     'username': username!.email.toString(),
                                     'movieId': id,
                                     'date': date,
+                                    'nameoftheuser':nameoftheuser,
                                     'movieName': oriname,
                                     'timeof': timeof,
                                     'cinemaName': cinemaname,
@@ -274,6 +278,7 @@ class _bookings extends State<bookings> {
                                   final personalBookingData = {
                                     'username': username!.email.toString(),
                                     'movieId': id,
+                                    'nameoftheuser':nameoftheuser,
                                     'date': date,
                                     'movieName': oriname,
                                     'timeof': timeof,

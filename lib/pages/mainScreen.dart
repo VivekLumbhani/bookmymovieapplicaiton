@@ -6,6 +6,7 @@ import 'package:nookmyseatapplication/models/getuser.dart';
 import 'package:nookmyseatapplication/pages/booking.dart';
 import 'package:nookmyseatapplication/pages/chats.dart';
 import 'package:nookmyseatapplication/pages/navbar.dart';
+import 'package:nookmyseatapplication/pages/qr_scanner.dart';
 import 'package:nookmyseatapplication/pages/seat_demo_layout.dart';
 import 'package:nookmyseatapplication/pages/seatstest.dart';
 import 'package:nookmyseatapplication/pages/widgets/custom_card_normal.dart';
@@ -228,7 +229,8 @@ class _MainScreenState extends State<MainScreen> {
                 context,
                 MaterialPageRoute(
                   builder: (context) =>
-                  chatsScreen(),
+                      QrScanner()
+                  // chatsScreen(),
                 ),
               )
             },

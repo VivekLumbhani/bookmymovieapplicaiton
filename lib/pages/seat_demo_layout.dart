@@ -317,44 +317,39 @@ class _SeatLayoutTryState extends State<SeatLayoutTry> {
     setState(() {
       String seatKey = '$rowIndex-$seatIndex-$partType';
 
-      bool isSeatSelected = selectedSeats.contains(seatKey);
-
-      if (!isSeatSelected && selectedSeats.length >= numofseats) {
-
+      // Check if the seat is reserved
+      if (reservedSeats.contains(seatKey)) {
+        // Seat is reserved, do not proceed
         return;
       }
 
+      // Check if the selected seat is from a different part
       if (selectedSeats.isNotEmpty && partType != selectedSeats.last.split('-').last) {
         selectedSeats.clear();
       }
 
+      // Check if the seat is already selected
+      bool isSeatSelected = selectedSeats.contains(seatKey);
+
       if (isSeatSelected) {
+        // Deselect the seat
         selectedSeats.remove(seatKey);
       } else {
+        // Select the seat
         selectedSeats.add(seatKey);
       }
 
-      print("Selected Seats: $selectedSeats");
-      buttonHeight = selectedSeats.isNotEmpty ? 50.0 : 0.0;
-
+      // Calculate total bill
       double totalBill = 0.0;
-
       for (String seat in selectedSeats) {
         List<String> seatInfo = seat.split('-');
-        int rowIndex = int.parse(seatInfo[0]);
-        int seatIndex = int.parse(seatInfo[1]);
-
-
         double seatPrice = seatInfo[2] == 'upper'
             ? double.parse(upperPart?['price'] ?? '0.0')
             : double.parse(lowerPart?['price'] ?? '0.0');
-
-        // Calculate the total price for the selected seats
         totalBill += seatPrice;
       }
-
-      // Set the totalBill variable in the state
       this.totalBill = totalBill;
+      buttonHeight = selectedSeats.isNotEmpty ? 50.0 : 0.0;
     });
   }
 

@@ -44,7 +44,7 @@ class _SignUpState extends State<SignUp> {
 
 
       await SharedPreferenceHelper().saveUserId(userIdto);
-      await SharedPreferenceHelper().saveName(_name.text);
+      await SharedPreferenceHelper().saveName(_name.text.toUpperCase());
       await SharedPreferenceHelper().saveUserEmail(_email.text);
 
 
@@ -55,11 +55,15 @@ class _SignUpState extends State<SignUp> {
         ),
       );
 
+      String userNameCap=_name.text.toUpperCase();
+      String firstletter=userNameCap.substring(0,1).toUpperCase();
+
       await FirebaseFirestore.instance.collection('users').add({
         'email': _email.text,
-        'name': _name.text,
+        'name': userNameCap,
         'phonenumber': _number.text,
         'uniqueUserId': userIdto,
+        "searchKey":firstletter,
       });
       setState(() {
         isLoading = false;

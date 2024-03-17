@@ -59,7 +59,7 @@ class _LoginPageState extends State<LoginPage> {
 
         await SharedPreferenceHelper().saveUserEmail(userEmailId);
         await SharedPreferenceHelper().saveUserId(userId);
-        await SharedPreferenceHelper().saveName(userName);
+        await SharedPreferenceHelper().saveName(userName.toUpperCase());
 
 
       } else {

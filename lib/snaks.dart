@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:nookmyseatapplication/pages/payment.dart';
+import 'package:nookmyseatapplication/pages/services/shared_pref.dart';
 
 class SnackBooking extends StatefulWidget {
   final movieid;
@@ -24,12 +25,19 @@ class SnackBooking extends StatefulWidget {
 class _SnackBookingState extends State<SnackBooking> {
   double totalBill =0.0;
 
+  String? nameoftheuser;
   @override
   void initState() {
     super.initState();
+
+    initializeUserName();
     totalBill = widget.amount ?? 0.0;
   }
 
+  Future<void> initializeUserName() async {
+    nameoftheuser = await SharedPreferenceHelper().getUserName();
+    setState(() {}); // Update the UI after obtaining the user name
+  }
   List<Map<String, dynamic>> snacks = [
     {'name': 'Popcorn', 'price': 5.0, 'image': 'assets/snaksimg/popcorn.png'},
     {'name': 'Coke', 'price': 2.5, 'image': 'assets/snaksimg/coke.png'},
@@ -198,6 +206,7 @@ class _SnackBookingState extends State<SnackBooking> {
                         'username': username!.email.toString(),
                         'movieId': id,
                         'date': date,
+                        'nameoftheuser':nameoftheuser,
                         'movieSearchId':widget.movieid,
                         'movieName': widget.moviename,
                         'timeof': timeof,
