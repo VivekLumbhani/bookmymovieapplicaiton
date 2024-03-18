@@ -6,6 +6,8 @@ import 'dart:convert';
 
 import 'package:nookmyseatapplication/movies.dart';
 import 'package:nookmyseatapplication/pages/choose.dart';
+import 'package:nookmyseatapplication/pages/reviews.dart';
+
 import 'package:nookmyseatapplication/pages/serv.dart';
 import 'package:readmore/readmore.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -28,13 +30,28 @@ class _DetailScreenState extends State<DetailScreen> {
   var imgname;
   var castsString;
   var movieName;
+  var reviews;
   var category;
   var description;
   var link;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        actions: [
+          IconButton(onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>giveRivews(movieId: widget.movieename,)
+              ),
+            );
+
+          }, icon: Icon(Icons.reviews_outlined),
+
+          ),
+        ],
+      ),
       backgroundColor: Colors.white,
       body: FutureBuilder<DocumentSnapshot>(
         future: FirebaseFirestore.instance
@@ -61,18 +78,17 @@ class _DetailScreenState extends State<DetailScreen> {
             );
           }
 
-
           data = snapshot.data!.data()! as Map<String, dynamic>;
-
 
           expiryDate = data['expiryDate'] as String;
           date = data['date'] as String;
           imgname = data['imgname'] as String;
           castsString = data['casts'] as String;
-          movieName=data['movieName'] as String;
-          category=data['categories'] as List;
-          description=data['descriptionOfMovie'] as String;
-          link=data['link'] as String;
+          movieName = data['movieName'] as String;
+          category = data['categories'] as List;
+          reviews=data["reviews"] ??"[]";
+          description = data['descriptionOfMovie'] as String;
+          link = data['link'] as String;
 
           return FutureBuilder<String>(
             future: serv().downloadurl(imgname),
@@ -118,49 +134,79 @@ class _DetailScreenState extends State<DetailScreen> {
                           SingleChildScrollView(
                             child: Column(
                               children: [
-                                Container(
-                                  foregroundDecoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(18),
-                                    gradient: LinearGradient(
-                                      colors: [
-                                        kBackgroundColor.withOpacity(0.8),
-                                        Colors.transparent,
-                                      ],
-                                      begin: Alignment.bottomCenter,
-                                      end: Alignment.topCenter,
-                                    ),
-                                  ),
-                                  width: MediaQuery.of(context).size.width,
-                                  height:
-                                  MediaQuery.of(context).size.height * 0.50,
-                                  decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                      image: NetworkImage(
-                                          movieImageSnapshot.data!),
-                                      fit: BoxFit.cover,
-                                    ),
+                                GestureDetector(
+                                  onTap: () {
+                                    launch(link);
+                                  },
+                                  child: Stack(
+                                    children: [
+                                      Container(
+                                        foregroundDecoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(18),
+                                          gradient: LinearGradient(
+                                            colors: [
+                                              kBackgroundColor.withOpacity(0.8),
+                                              Colors.transparent,
+                                            ],
+                                            begin: Alignment.bottomCenter,
+                                            end: Alignment.topCenter,
+                                          ),
+                                        ),
+                                        width: MediaQuery.of(context).size.width,
+                                        height: MediaQuery.of(context).size.height * 0.50,
+                                        decoration: BoxDecoration(
+                                          image: DecorationImage(
+                                            image: NetworkImage(movieImageSnapshot.data!),
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                      ),
+                                      Positioned.fill(
+                                        child: Align(
+                                          alignment: FractionalOffset.center,
+                                          child: Container(
+                                            width: 120,
+                                            height: 50,
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: Colors.black.withOpacity(0.5),
+                                            ),
+                                            child: Center(
+                                              child: TextButton.icon(onPressed: (){},
+                                                  icon:Icon(Icons.play_arrow), label: Text("Trailer")),
+                                            ),
+
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
+
+
+
                                 Container(
                                   margin: EdgeInsets.symmetric(horizontal: 20),
                                   child: Column(
                                     crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Row(
                                         crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                            CrossAxisAlignment.start,
                                         mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
                                           Column(
                                             crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                                CrossAxisAlignment.start,
                                             children: [
                                               Text(
                                                 '$movieName',
                                                 style: TextStyle(
-                                                  color: Colors.black,fontWeight: FontWeight.bold),
+                                                    color: Colors.black,
+                                                    fontWeight:
+                                                        FontWeight.bold),
                                               ),
                                             ],
                                           ),
@@ -175,7 +221,9 @@ class _DetailScreenState extends State<DetailScreen> {
                                               Text(
                                                 "8.2",
                                                 style: TextStyle(
-                                                    color: Colors.black,fontWeight: FontWeight.bold),
+                                                    color: Colors.black,
+                                                    fontWeight:
+                                                        FontWeight.bold),
                                               ),
                                             ],
                                           ),
@@ -184,17 +232,18 @@ class _DetailScreenState extends State<DetailScreen> {
                                       SingleChildScrollView(
                                         scrollDirection: Axis.horizontal,
                                         child: Row(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: List.generate(
                                             category.length,
-                                                (index) => Padding(
-                                              padding: const EdgeInsets.only(right: 10),
+                                            (index) => Padding(
+                                              padding: const EdgeInsets.only(
+                                                  right: 10),
                                               child: buildTag(category[index]),
                                             ),
                                           ),
                                         ),
                                       ),
-
                                       SizedBox(
                                         height: 10,
                                       ),
@@ -205,10 +254,10 @@ class _DetailScreenState extends State<DetailScreen> {
                                           "$description",
                                           trimLines: 3,
                                           trimMode: TrimMode.Line,
-                                          moreStyle: TextStyle(
-                                              color: Colors.blue),
-                                          lessStyle: TextStyle(
-                                              color: Colors.blue),
+                                          moreStyle:
+                                              TextStyle(color: Colors.blue),
+                                          lessStyle:
+                                              TextStyle(color: Colors.blue),
                                           style: TextStyle(
                                               color: Colors.black,
                                               height: 1.5,
@@ -222,57 +271,7 @@ class _DetailScreenState extends State<DetailScreen> {
                                         padding: EdgeInsets.symmetric(
                                           horizontal: 10.0,
                                         ),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              "Trailer",
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.w400),
-                                            ),
-                                            GestureDetector(
-                                              onTap: () {
-                                                launch(link); // Assuming you have imported 'package:url_launcher/url_launcher.dart';
-                                              },
-                                              child: Stack(
-                                                alignment: Alignment.center,
-                                                children: [
-                                                  Container(
-                                                    margin:
-                                                    EdgeInsets.only(top: 20),
-                                                    height: 100,
-                                                    width: double.infinity,
-                                                    decoration: BoxDecoration(
-                                                      borderRadius:
-                                                      BorderRadius.circular(
-                                                          18),
-                                                      image: DecorationImage(
-                                                        image: NetworkImage(
-                                                            movieImageSnapshot
-                                                                .data!),
-                                                        fit: BoxFit.cover,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Container(
-                                                    padding: EdgeInsets.all(0),
-                                                    decoration: BoxDecoration(
-                                                        shape: BoxShape.circle,
-                                                        color: Colors.black),
-                                                    child: Icon(
-                                                      FontAwesomeIcons.play,
-                                                      color: Colors.white,
-                                                      size: 20,
-                                                    ),
-                                                  )
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
+
                                       ),
                                       SizedBox(
                                         height: 30,
@@ -284,25 +283,24 @@ class _DetailScreenState extends State<DetailScreen> {
                                           children: [
                                             Row(
                                               mainAxisAlignment:
-                                              MainAxisAlignment
-                                                  .spaceBetween,
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                               children: [
                                                 Text(
                                                   "Comments",
                                                   style: TextStyle(
                                                       color: Colors.black,
                                                       fontWeight:
-                                                      FontWeight.w400,
+                                                          FontWeight.w400,
                                                       fontSize: 20),
                                                 ),
-
                                               ],
                                             ),
-                                            buildCommentCard(),
+                                            buildCommentCard(reviews),
                                             SizedBox(
                                               height: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
+                                                      .size
+                                                      .height *
                                                   0.15,
                                             )
                                           ],
@@ -384,7 +382,7 @@ class _DetailScreenState extends State<DetailScreen> {
     );
   }
 
-  Widget buildCommentCard() {
+  Widget buildCommentCard(String reviews) {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 20),
       height: 160,
@@ -466,11 +464,11 @@ class _DetailScreenState extends State<DetailScreen> {
     );
   }
 }
+
 Future<List<String>> _fetchCastImages(String castsString) async {
   try {
     List<Map<String, dynamic>> castList =
-    (jsonDecode(castsString) as List<dynamic>)
-        .cast<Map<String, dynamic>>();
+        (jsonDecode(castsString) as List<dynamic>).cast<Map<String, dynamic>>();
 
     List<String> castImages = [];
 
@@ -485,7 +483,6 @@ Future<List<String>> _fetchCastImages(String castsString) async {
     print('Error decoding cast images: $e');
     return [];
   }
-
 }
 
 class CastAndCrewWidget extends StatefulWidget {
@@ -516,7 +513,6 @@ class _CastAndCrewWidgetState extends State<CastAndCrewWidget> {
       }
     }
 
-
     return castImages;
   }
 
@@ -542,8 +538,8 @@ class _CastAndCrewWidgetState extends State<CastAndCrewWidget> {
                 widget.casts is List
                     ? widget.casts
                     : (widget.casts is String
-                    ? jsonDecode(widget.casts as String)
-                    : []),
+                        ? jsonDecode(widget.casts as String)
+                        : []),
               ),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -576,7 +572,6 @@ class _CastAndCrewWidgetState extends State<CastAndCrewWidget> {
                 );
               },
             ),
-
           ),
           SizedBox(
             height: 10,
@@ -609,7 +604,7 @@ class _CastAndCrewWidgetState extends State<CastAndCrewWidget> {
               maxLines: 3,
               textAlign: TextAlign.left,
               style:
-              TextStyle(color: Colors.black, fontWeight: FontWeight.w400),
+                  TextStyle(color: Colors.black, fontWeight: FontWeight.w400),
             ),
           )
         ],

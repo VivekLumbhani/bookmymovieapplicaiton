@@ -143,19 +143,19 @@ final legendaryImage=[
 final genresList=[
   MovieModel(
     imageAsset: "images/scific.jpeg",
-    movieName: "Sci-fic",
+    movieName: "science",
   ),
   MovieModel(
     imageAsset: "images/horror.jpeg",
-    movieName: "Horror",
+    movieName: "horror",
   ),
   MovieModel(
     imageAsset: "images/romance.jpeg",
-    movieName: "Romance",
+    movieName: "love",
   ),
   MovieModel(
     imageAsset: "images/comedy.jpeg",
-    movieName: "Comedy",
+    movieName: "humor",
   ),
 
 ];

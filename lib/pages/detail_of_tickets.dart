@@ -301,7 +301,7 @@ class _TicketDetailsScreenState extends State<ticketDetailsScreen> {
                                           '${formattedDate}',
                                           style: TextStyle(
                                               fontSize: 24,
-                                              fontWeight: FontWeight.bold),
+                                              fontWeight: FontWeight.w500),
                                         ),
                                       ],
                                     ),
@@ -318,7 +318,7 @@ class _TicketDetailsScreenState extends State<ticketDetailsScreen> {
                                           '${widget.time}',
                                           style: TextStyle(
                                               fontSize: 24,
-                                              fontWeight: FontWeight.bold),
+                                              fontWeight: FontWeight.w500),
                                         ), // Replace with actual time from data
                                       ],
                                     ),
@@ -345,7 +345,7 @@ class _TicketDetailsScreenState extends State<ticketDetailsScreen> {
                                             '${widget.cinemaName}',
                                             style: TextStyle(
                                                 fontSize: 24,
-                                                fontWeight: FontWeight.bold),
+                                                fontWeight: FontWeight.w500),
                                           ),
                                         ],
                                       ),
@@ -366,7 +366,7 @@ class _TicketDetailsScreenState extends State<ticketDetailsScreen> {
                                             "${seatsInAlphabets}",
                                             style: TextStyle(
                                                 fontSize: 24,
-                                                fontWeight: FontWeight.bold),
+                                                fontWeight: FontWeight.w500),
                                           )
                                         ],
                                       ),

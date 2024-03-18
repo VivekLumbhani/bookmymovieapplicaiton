@@ -1,57 +1,76 @@
-
+import 'dart:async';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
 import 'package:nookmyseatapplication/models/getuser.dart';
-import 'package:nookmyseatapplication/pages/booking.dart';
-import 'package:nookmyseatapplication/pages/chats.dart';
+import 'package:nookmyseatapplication/models/moviesget.dart';
+import 'package:nookmyseatapplication/pages/genreList.dart';
 import 'package:nookmyseatapplication/pages/navbar.dart';
-import 'package:nookmyseatapplication/pages/qr_scanner.dart';
-import 'package:nookmyseatapplication/pages/seat_demo_layout.dart';
-import 'package:nookmyseatapplication/pages/seatstest.dart';
+import 'package:nookmyseatapplication/pages/serv.dart';
 import 'package:nookmyseatapplication/pages/widgets/custom_card_normal.dart';
 import 'package:nookmyseatapplication/pages/widgets/custom_card_thumbnail.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-
-import '../colors.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import '../movies.dart';
-import 'choose.dart';
-
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
-
   @override
   State<MainScreen> createState() => _MainScreenState();
 }
-
 class _MainScreenState extends State<MainScreen> {
   final FirebaseGetUserApi api = FirebaseGetUserApi();
-
   final List<MovieModel> foryouItemList = List.of(forYouImages);
   final List<MovieModel> popularItemList = List.of(popularImages);
   final List<MovieModel> genresItemList = List.of(genresList);
+  bool get wantKeepAlive => true; // Keep the state alive
 
-  String localname="";
-  String userNamee="";
-  String phoneNumber="";
-  String email="";
+
+  String localname = "";
+  String userNamee = "";
+  String phoneNumber = "";
+  String email = "";
   final username = FirebaseAuth.instance.currentUser;
   final firebase_storage.FirebaseStorage storage =
       firebase_storage.FirebaseStorage.instance;
   final PageController pageController =
-      PageController(initialPage: 0, viewportFraction: 0.9);
+  PageController(initialPage: 0, viewportFraction: 0.9);
+  Timer? _timer;
+  int _numberOfItems = 0;
+
+  int activeIndex=0;
   @override
   void initState() {
     super.initState();
     loadSelectedCity();
+    loadData();
+
   }
+  Future<void> loadData() async {
+    final List<Map<String, dynamic>> data = await Firebaseapitest().getUpcomingData();
+    setState(() {
+      _numberOfItems = data.length;
+    });
+    }
+  bool isMovieReleased(String releaseDate) {
+    DateTime relDate = DateTime.parse(releaseDate);
+    DateTime currentDate = DateTime.now();
+    return currentDate.isBefore(relDate);
+  }
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
   Future<void> loadSelectedCity() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       localname = prefs.getString("USERNAMEKEY") ?? "";
     });
   }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,7 +81,6 @@ class _MainScreenState extends State<MainScreen> {
             future: api.getUserDetails(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-
                 return CircularProgressIndicator();
               } else if (snapshot.hasError) {
                 // Future encountered an error, show error message
@@ -70,14 +88,10 @@ class _MainScreenState extends State<MainScreen> {
               } else {
                 // Future completed successfully, use the data
                 var userData = snapshot.data;
-
                 print("user data $userData");
-                // You can access the user data here
-                 userNamee = userData?['name'] ?? 'Unknown';
-                 phoneNumber = userData?['phoneNumber'] ?? 'Unknown';
-                 email = userData?['email'] ?? 'Unknown';
-
-                // Now you can use these values in your widget
+                userNamee = userData?['name'] ?? 'Unknown';
+                phoneNumber = userData?['phoneNumber'] ?? 'Unknown';
+                email = userData?['email'] ?? 'Unknown';
                 return Container();
               }
             },
@@ -101,6 +115,64 @@ class _MainScreenState extends State<MainScreen> {
                       ],
                     ),
                   ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Upcoming Movies",
+                        style: TextStyle(color: Colors.black,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 200,
+                    child: PageView.builder(
+                      controller: pageController,
+                      scrollDirection: Axis.horizontal,
+                      itemCount: _numberOfItems,
+                      itemBuilder: (context, index) {
+                        return FutureBuilder<List<Map<String, dynamic>>>(
+                          future: Firebaseapitest().getUpcomingData(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState == ConnectionState.waiting) {
+                              return CircularProgressIndicator();
+                            } else if (snapshot.hasError) {
+                              return Text('Error: ${snapshot.error}');
+                            } else {
+                              final imageData = snapshot.data![index];
+                              final String imageName = imageData['imgname'];
+
+                              return FutureBuilder<String>(
+                                future: serv().downloadurl(imageName),
+                                builder: (context, imageSnapshot) {
+                                  if (imageSnapshot.connectionState == ConnectionState.waiting) {
+                                    return CircularProgressIndicator();
+                                  } else if (imageSnapshot.hasError) {
+                                    return Text('Error: ${imageSnapshot.error}');
+                                  } else if (!imageSnapshot.hasData) {
+                                    return Text('No image data available');
+                                  } else {
+                                    return Padding(
+                                      padding: EdgeInsets.symmetric(horizontal: 10), // Adjust the padding as needed
+                                      child: Image.network(
+                                        imageSnapshot.data!,
+                                        width: MediaQuery.of(context).size.width,
+                                        height: 200,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    );
+                                  }
+                                },
+                              );
+                            }
+                          },
+                        );
+                      },
+                    ),
+                  ),
                   const SizedBox(
                     height: 10,
                   ),
@@ -118,7 +190,6 @@ class _MainScreenState extends State<MainScreen> {
                     ),
                   ),
                   foryoucardsLayout(context, foryouItemList),
-
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
                     child: Column(
@@ -191,7 +262,7 @@ class _MainScreenState extends State<MainScreen> {
       height: MediaQuery.of(context).size.height * 0.60,
       child: PageView.builder(
         physics: ClampingScrollPhysics(),
-        controller: pageController,
+
         itemCount: 1,
         itemBuilder: (context, index) {
           return CustomCardThumnail();
@@ -225,13 +296,13 @@ class _MainScreenState extends State<MainScreen> {
         itemBuilder: (context, index) {
           return InkWell(
             onTap: () => {
+              print("selected genre is ${genresList[index].movieName.toString() }"),
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) =>
-                      QrScanner()
-                  // chatsScreen(),
-                ),
+                      GenresList(categoryof:genresList[index].movieName.toString(),)
+                  ),
               )
             },
             child: Stack(
@@ -248,7 +319,7 @@ class _MainScreenState extends State<MainScreen> {
                     ),
                   ),
                   margin:
-                      EdgeInsets.only(left: 15, right: 15, top: 8, bottom: 30),
+                  EdgeInsets.only(left: 15, right: 15, top: 8, bottom: 30),
                 ),
                 Positioned(
                   bottom: 0,

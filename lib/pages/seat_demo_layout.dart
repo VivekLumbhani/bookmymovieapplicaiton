@@ -331,6 +331,13 @@ class _SeatLayoutTryState extends State<SeatLayoutTry> {
       // Check if the seat is already selected
       bool isSeatSelected = selectedSeats.contains(seatKey);
 
+      // Check if selecting this seat would exceed the limit
+      if (!isSeatSelected && selectedSeats.length >= numofseats) {
+        // Display a message or prevent further selection
+        // For now, let's just return without doing anything
+        return;
+      }
+
       if (isSeatSelected) {
         // Deselect the seat
         selectedSeats.remove(seatKey);

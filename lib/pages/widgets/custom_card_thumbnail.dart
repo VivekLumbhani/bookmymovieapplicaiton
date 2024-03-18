@@ -41,11 +41,13 @@ class _CustomCardThumnailState extends State<CustomCardThumnail> {
               var moviedet = doc.data() as Map<String, dynamic>;
               String movieid = doc.id ?? 'not found';
               String moviename = moviedet['movieName'] ?? 'Unknown Bus';
+              String releaseDate=moviedet['date']??'';
 
               String imgname = moviedet['imgname'] ?? 'Unknown seats';
               String movieexpdate = moviedet['expiryDate'];
 
               DateTime expdate = DateTime.parse(movieexpdate);
+              DateTime relDate=DateTime.parse(releaseDate);
               DateTime currentDate = DateTime.now();
 
               return FutureBuilder<String>(
@@ -61,7 +63,7 @@ class _CustomCardThumnailState extends State<CustomCardThumnail> {
                     return Text('No image data available');
                   } else {
                     print("movie name is $imgname");
-                    if (currentDate.isBefore(expdate)) {
+                    if (currentDate.isBefore(expdate) && !relDate.isAfter(currentDate)) {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
