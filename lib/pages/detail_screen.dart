@@ -165,7 +165,7 @@ class _DetailScreenState extends State<DetailScreen> {
                                         child: Align(
                                           alignment: FractionalOffset.center,
                                           child: Container(
-                                            width: 120,
+                                            width: 500,
                                             height: 50,
                                             decoration: BoxDecoration(
                                               shape: BoxShape.circle,
@@ -173,7 +173,7 @@ class _DetailScreenState extends State<DetailScreen> {
                                             ),
                                             child: Center(
                                               child: TextButton.icon(onPressed: (){},
-                                                  icon:Icon(Icons.play_arrow), label: Text("Trailer")),
+                                                  icon:Icon(Icons.play_arrow,color: Colors.white,), label: Text("Trailer",style: TextStyle(color: Colors.white),)),
                                             ),
 
                                           ),
@@ -274,7 +274,7 @@ class _DetailScreenState extends State<DetailScreen> {
 
                                       ),
                                       SizedBox(
-                                        height: 30,
+                                        height: 10,
                                       ),
                                       Padding(
                                         padding: EdgeInsets.symmetric(
@@ -383,11 +383,14 @@ class _DetailScreenState extends State<DetailScreen> {
   }
 
   Widget buildCommentCard(String reviews) {
+    var decodedReviews = List<Map<String, dynamic>>.from(jsonDecode(reviews));
+
+    print("all revies are $decodedReviews and type is ${decodedReviews.runtimeType}");
     return Container(
       margin: EdgeInsets.symmetric(vertical: 20),
       height: 160,
       child: ListView.builder(
-        itemCount: popularItems[0].comments!.length,
+        itemCount: decodedReviews.length,
         scrollDirection: Axis.horizontal,
         itemBuilder: (context, index) {
           return Container(
@@ -408,7 +411,7 @@ class _DetailScreenState extends State<DetailScreen> {
                     shape: BoxShape.circle,
                     image: DecorationImage(
                       image: AssetImage(
-                        popularItems[0].comments![index]["imageUrl"].toString(),
+                         "images/unknown.jpeg",
                       ),
                     ),
                   ),
@@ -419,7 +422,7 @@ class _DetailScreenState extends State<DetailScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        popularItems[0].comments![index]["name"],
+                        decodedReviews[index]["user"] ?? "Unknown User",
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
@@ -427,7 +430,7 @@ class _DetailScreenState extends State<DetailScreen> {
                       ),
                       SizedBox(height: 5),
                       Text(
-                        popularItems[0].comments![index]["date"],
+                        decodedReviews[index]["description"] ?? "No description",
                         style: TextStyle(color: Colors.white60),
                       ),
                       SizedBox(height: 5),
@@ -437,7 +440,7 @@ class _DetailScreenState extends State<DetailScreen> {
                           Row(
                             children: [
                               Text(
-                                popularItems[0].comments![index]["rating"],
+                                decodedReviews[index]["rating"]?.toString() ?? "0",
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
@@ -445,7 +448,7 @@ class _DetailScreenState extends State<DetailScreen> {
                               ),
                               SizedBox(width: 4),
                               Icon(
-                                FontAwesomeIcons.solidStar,
+                                Icons.star,
                                 color: Colors.yellow,
                                 size: 12,
                               ),
@@ -463,6 +466,7 @@ class _DetailScreenState extends State<DetailScreen> {
       ),
     );
   }
+
 }
 
 Future<List<String>> _fetchCastImages(String castsString) async {

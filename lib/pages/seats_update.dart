@@ -3,6 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:nookmyseatapplication/pages/messages.dart';
+import 'package:nookmyseatapplication/pages/services/database.dart';
+import 'package:nookmyseatapplication/pages/services/shared_pref.dart';
 import 'package:nookmyseatapplication/snaks.dart';
 
 class SeatsUpdate extends StatefulWidget {
@@ -39,6 +41,24 @@ class _SeatLayoutTryState extends State<SeatsUpdate> {
 
   var username = FirebaseAuth.instance.currentUser;
 
+  String? myName;
+  String? myEmail;
+
+  gettheSharedPref()async{
+    myName=await SharedPreferenceHelper().getUserName();
+    myEmail=await SharedPreferenceHelper().getUserEmail();
+
+  }
+
+
+  ontheLoad()async{
+    // chatRoomsStream=await DatabasesHelper().getChatRooms();
+    await gettheSharedPref();
+
+    setState(() {
+
+    });
+  }
 
   List<String> reservedSeats = [];
   List<String> selectedSeats = [];
@@ -53,6 +73,14 @@ class _SeatLayoutTryState extends State<SeatsUpdate> {
   int? numsCalc;
   String? allSeatsofbookings;
 
+  String getChatRoomIdbyUserName(String a, String b) {
+    if (a.substring(0, 1).codeUnitAt(0) > b.substring(0, 1).codeUnitAt(0)) {
+      return "$b\_$a";
+    }
+    else {
+      return "$a\_$b";
+    }
+  }
 
   Map<String, String> seatUserNameMap = {};
 
@@ -60,6 +88,7 @@ class _SeatLayoutTryState extends State<SeatsUpdate> {
   @override
   void initState() {
     super.initState();
+    ontheLoad();
 
     String seatstr = widget.seatingArrangement.trim();
     print("seat trim $seatstr");
@@ -68,6 +97,7 @@ class _SeatLayoutTryState extends State<SeatsUpdate> {
 
     finalseatsbyusertocheck = json.decode(widget.selectedSeats);
 
+    print("selectedSeatsofUser is $selectedSeatsofUser and length is ${selectedSeatsofUser?.length}");
     print("selected seats $finalseatsbyusertocheck and its length ${finalseatsbyusertocheck?.length}");
     upperPart = seatingArrMap?['upperPart'];
     lowerPart = seatingArrMap?['lowerPart'];
@@ -215,34 +245,30 @@ class _SeatLayoutTryState extends State<SeatsUpdate> {
                   child: Center(
                     child: ElevatedButton(
                       onPressed: () {
+                        print("selected seats $selectedSeats and all seats were $allSeatsofbookings  price is $totalBill");
+                        List<String> decodedseats = (allSeatsofbookings as List<dynamic>).map((e) => e.toString()).toList();
+                        List<String> decodedusersoldseats = (finalseatsbyusertocheck as List<dynamic>).map((e) => e.toString()).toList();
+
+
+                        print("selected seats ${selectedSeats.runtimeType} and all seats were ${allSeatsofbookings.runtimeType}  price is ${totalBill.runtimeType}");
+
                         print("selected seats $selectedSeats and all seasts were $allSeatsofbookings  price is $totalBill");
 
+
+                        print("users old seats $decodedusersoldseats and type ${decodedusersoldseats.runtimeType}");
+                        print("all seats are $decodedseats and type ${decodedseats.runtimeType}");
 
                         print("selected seats ${selectedSeats.runtimeType} and all seasts were ${allSeatsofbookings.runtimeType}  price is ${totalBill.runtimeType}");
 
 
 
                       },
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) => SnackBooking(
-                        //         movieid: widget.movieename,
-                        //         date: widget.date,
-                        //         moviename: widget.oriname,
-                        //         cinemaname: widget.cinemaname,
-                        //         selecttime: widget.selectTime,
-                        //         seats: selectedSeats,
-                        //         amount: totalBill,
-                        //         seatingArr:seatingArrMap
-                        //     ),
-                        //   ),
-                        // );
+
 
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
                       ),
-                      child: Text('Pay $totalBill'),
+                      child: Text('Update seats'),
                     ),
                   ),
                 ),
@@ -307,16 +333,17 @@ class _SeatLayoutTryState extends State<SeatsUpdate> {
 
                     bool isReserved = reservedSeats.contains(seatKey);
                     bool isSelected = selectedSeats.contains(seatKey);
-                    bool isSelectedByUser = selectedSeatsofUser?.contains(seatKey) ?? false;
+                    bool isSelectedByUser = selectedSeats.contains(seatKey) && selectedSeatsofUser!.contains(seatKey) ?? false;
 
-
+                    // Determine the color of the seat
+                    Color seatColor = Colors.white;
                     if (isSelectedByUser) {
-                      isReserved = false;
-
+                      seatColor = Colors.green;
+                    } else if (isSelected) {
+                      seatColor = Colors.green;
+                    } else if (isReserved) {
+                      seatColor = Colors.grey;
                     }
-
-
-
 
                     return Padding(
                       padding: EdgeInsets.only(
@@ -335,13 +362,7 @@ class _SeatLayoutTryState extends State<SeatsUpdate> {
                           decoration: BoxDecoration(
                             border: Border.all(color: Colors.black),
                             borderRadius: BorderRadius.circular(1),
-                            color: isReserved
-                                ? Colors.grey
-                                : isSelectedByUser
-                                ? Colors.green
-                                : isSelected
-                                ? Colors.green
-                                : Colors.white,
+                            color: seatColor, // Set the determined color
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -373,45 +394,6 @@ class _SeatLayoutTryState extends State<SeatsUpdate> {
     );
   }
 
-  void handleUserSelectedSeatTap(String seatKey) {
-    setState(() {
-      bool isSeatSelected = selectedSeats.contains(seatKey);
-
-      // Check if the seat is already selected by the user
-      if (isSeatSelected) {
-        // If the seat is previously booked by the user, allow deselection
-        if (finalseatsbyusertocheck!.contains(seatKey)) {
-          print('Deselecting seat: $seatKey');
-          selectedSeats.remove(seatKey);
-          selectedSeatsofUser?.remove(seatKey);
-
-          // Recalculate total bill
-          double totalBill = calculateTotalBill();
-          print('New total bill after deselection: $totalBill');
-          this.totalBill = totalBill;
-
-          // Update button height based on selected seats
-          buttonHeight = selectedSeats.isNotEmpty ? 50.0 : 0.0;
-        }
-      } else {
-        // If not already selected, allow selection if there are fewer than 2 selected seats
-        if (selectedSeats.length < 2) {
-          print('Selecting seat: $seatKey');
-          selectedSeats.add(seatKey);
-          selectedSeatsofUser?.remove(seatKey);
-
-          // Recalculate total bill
-          double totalBill = calculateTotalBill();
-          print('New total bill after selection: $totalBill');
-          this.totalBill = totalBill;
-
-          // Update button height based on selected seats
-          buttonHeight = selectedSeats.isNotEmpty ? 50.0 : 0.0;
-        }
-      }
-    });
-  }
-
   void handleSeatTap(int rowIndex, int seatIndex, String partType) {
     setState(() {
       String seatKey = '$rowIndex-$seatIndex-$partType';
@@ -435,9 +417,14 @@ class _SeatLayoutTryState extends State<SeatsUpdate> {
                   child: Text('No'),
                 ),
                 TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    // Navigate to the new screen
+                  onPressed: () async {
+
+                    var chatRoomId=getChatRoomIdbyUserName(myName!, userName);
+                    Map<String,dynamic>chatRoomInfoMap={
+                      "users":[myName,userName],
+                    };
+                    await DatabasesHelper().createChatRoom(chatRoomId, chatRoomInfoMap);
+
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -454,31 +441,65 @@ class _SeatLayoutTryState extends State<SeatsUpdate> {
         return;
       }
 
+      if (isSeatReserved(seatKey)) {
+        // Reservation handling remains the same
+        return;
+      }
 
+      // Check if the seat is already selected by the user
       bool isSeatSelected = selectedSeats.contains(seatKey);
 
-      if (!isSeatSelected && selectedSeats.length + 1 > finalseatsbyusertocheck!.length) {
-        double seatPrice = partType == 'upper'
-            ? double.parse(upperPart?['price'] ?? '0.0')
-            : double.parse(lowerPart?['price'] ?? '0.0');
-        totalBill += seatPrice;
+      // Check if the user already has a seat in the opposite part
+      bool hasSeatInOppositePart = false;
+      String oppositePartType = partType == 'upper' ? 'lower' : 'upper';
+      for (String selectedSeat in selectedSeats) {
+        if (selectedSeat.contains(oppositePartType)) {
+          hasSeatInOppositePart = true;
+          break;
+        }
       }
 
-      if (selectedSeats.isNotEmpty && partType != selectedSeats.last.split('-').last) {
-        selectedSeats.clear();
-        selectedSeats.addAll(selectedSeatsofUser! as Iterable<String>);
-      }
-
-      if (selectedSeatsofUser!.contains(seatKey)) {
+      // If the user has a seat in the opposite part, prevent selecting seats in this part
+      if (hasSeatInOppositePart) {
         return;
       }
 
       if (isSeatSelected) {
+        // If the seat is already selected, deselect it
         selectedSeats.remove(seatKey);
       } else {
+        // If the seat is not selected, check if the total selected seats is less than or equal to selectedSeatsofUser.length
+        if (selectedSeats.length < selectedSeatsofUser!.length) {
+          selectedSeats.add(seatKey);
+        }
+      }
+
+      // Recalculate total bill
+      double totalBill = calculateTotalBill();
+      print('New total bill after seat tap: $totalBill');
+      this.totalBill = totalBill;
+
+      // Update button height based on selected seats
+      buttonHeight = selectedSeats.isNotEmpty ? 50.0 : 0.0;
+    });
+  }
+
+  void handleUserSelectedSeatTap(String seatKey) {
+    setState(() {
+      // Deselect the seat if it's already selected
+      if (selectedSeats.contains(seatKey)) {
+        selectedSeats.remove(seatKey);
+      } else {
+        // If the seat is not selected, add it back to the selectedSeats list
         selectedSeats.add(seatKey);
       }
 
+      // Recalculate total bill
+      double totalBill = calculateTotalBill();
+      print('New total bill after deselection: $totalBill');
+      this.totalBill = totalBill;
+
+      // Update button height based on selected seats
       buttonHeight = selectedSeats.isNotEmpty ? 50.0 : 0.0;
     });
   }

@@ -12,27 +12,27 @@ class MyAppIntroductionScreen extends StatelessWidget {
     return [
       _buildPage(
         context,
-        "images/profile.png",
+        "images/users.jpeg",
         'Get Started',
         "Movie app with all sorts of facilities provided from end-to-end",
       ),
       _buildPage(
         context,
-        "images/download.jpg",
-        'Second Page',
-        "Movie app with all sorts of facilities provided from end-to-end",
+        "images/que.jpeg",
+        'Hassle free',
+        "Never worry to stand in long queue at box office..",
       ),
       _buildPage(
         context,
-        "images/horror.jpeg",
+        "images/rush.jpeg",
         'Third Page',
-        "Movie app with all sorts of facilities provided from end-to-endMovie app with all sorts of facilities provided from end-to-end",
+        "Don't worry to rush for last minute show book early and hassle free from your app",
       ),
       _buildPage(
         context,
-        "images/romance.jpeg",
-        'Fourth Page',
-        "Movie app with all sorts of facilities provided from end-to-end",
+        "images/getready.png",
+        "Let's Go",
+        "Start your movie journey with us! and don't forget to take you snacks & coldrinks 😜",
       ),
     ];
   }

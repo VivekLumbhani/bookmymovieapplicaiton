@@ -35,6 +35,14 @@ class _SignUpState extends State<SignUp> {
         isLoading = true;
       });
 
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => MyAppIntroductionScreen(),
+        ),
+      );
+
       String userIdto = randomAlphaNumeric(10);
 
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
@@ -47,13 +55,6 @@ class _SignUpState extends State<SignUp> {
       await SharedPreferenceHelper().saveName(_name.text.toUpperCase());
       await SharedPreferenceHelper().saveUserEmail(_email.text);
 
-
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => MyAppIntroductionScreen(),
-        ),
-      );
 
       String userNameCap=_name.text.toUpperCase();
       String firstletter=userNameCap.substring(0,1).toUpperCase();

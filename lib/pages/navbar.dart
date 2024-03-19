@@ -143,7 +143,7 @@ class navbar extends StatelessWidget {
             leading: Icon(Icons.airplane_ticket_sharp),
             title: Text('My Tickets'),
             onTap: () {
-              Navigator.pushReplacement(
+              Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => booked()),
               );

@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:nookmyseatapplication/pages/services/shared_pref.dart';
+import 'package:nookmyseatapplication/pages/test_home.dart';
 
 class PaymentScreen extends StatefulWidget {
   final movieid;
@@ -385,8 +386,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
                               actions: <Widget>[
                                 TextButton(
                                   onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
+
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => HomeScreen()),
+                                    );                                  },
                                   child: Text('OK'),
                                 ),
                               ],
