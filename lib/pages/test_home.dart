@@ -40,11 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
     ),
     BottomNavigationBarItem(
       icon: Icon(FontAwesomeIcons.compass),
-      label: 'Explore',
-    ),
-    BottomNavigationBarItem(
-      icon: Icon(FontAwesomeIcons.video),
-      label: 'Something',
+      label: 'All Movies',
     ),
     BottomNavigationBarItem(
       icon: Icon(FontAwesomeIcons.user),
@@ -136,7 +132,6 @@ class _HomeScreenState extends State<HomeScreen> {
         physics: NeverScrollableScrollPhysics(),
         children: [
           MainScreen(),
-          something(),
           explore(),
           profile(),
         ],

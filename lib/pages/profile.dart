@@ -1,12 +1,48 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:nookmyseatapplication/pages/booked.dart';
 import 'package:nookmyseatapplication/pages/chats.dart';
+import 'package:nookmyseatapplication/pages/login_or_signup.dart';
+import 'package:nookmyseatapplication/pages/loginpage.dart';
 
-class profile extends StatelessWidget {
+class profile extends StatefulWidget {
   const profile({Key? key}) : super(key: key);
 
+  @override
+  State<profile> createState() => _ProfileState();
+}
+
+class _ProfileState extends State<profile> {
+  String? name;
+  String? phoneNumber;
+
+  String? useremail;
+  @override
+  void initState() {
+    super.initState();
+    fetchUserData();
+  }
+
+  Future<void> fetchUserData() async {
+    final username = FirebaseAuth.instance.currentUser;
+    useremail=username!.email.toString();
+
+    if (useremail != null) {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .where('email', isEqualTo: useremail.toString())
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        setState(() {
+          name = querySnapshot.docs.first['name'];
+          phoneNumber = querySnapshot.docs.first['phonenumber'];
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,12 +60,17 @@ class profile extends StatelessWidget {
               ),
               SizedBox(height: 20),
               Text(
-                'John Doe', // Replace with actual name
+                name ?? 'Loading...', // Display loading if name is not fetched yet
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 10),
               Text(
-                '+1234567890', // Replace with actual phone number
+                useremail ?? 'Loading...', // Display loading if name is not fetched yet
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 10),
+              Text(
+                phoneNumber ?? 'Loading...', // Display loading if phone number is not fetched yet
                 style: TextStyle(fontSize: 18),
               ),
               SizedBox(height: 40),
@@ -40,8 +81,7 @@ class profile extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) =>
-                            chatsScreen(),
+                      builder: (context) => chatsScreen(),
                     ),
                   );
                 },
@@ -53,8 +93,7 @@ class profile extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) =>
-                            booked(),
+                      builder: (context) => booked(),
                     ),
                   );
                 },
@@ -62,16 +101,19 @@ class profile extends StatelessWidget {
               // Add more list tiles for additional options
               ListTile(
                 leading: Icon(Icons.feedback_outlined),
-                title: Text('Feed back'),
+                title: Text('Feedback'),
                 onTap: () {
                   showFeedbackDialog(context);
                 },
               ),
               Spacer(),
-
               ElevatedButton(
                 onPressed: () async {
                   await FirebaseAuth.instance.signOut();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) =>LoginAndSignup() ),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   primary: Colors.red,
@@ -156,6 +198,4 @@ class profile extends StatelessWidget {
       },
     );
   }
-
-
 }

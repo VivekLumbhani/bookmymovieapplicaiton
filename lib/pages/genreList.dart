@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:nookmyseatapplication/pages/serv.dart';
@@ -39,22 +41,32 @@ class _GenresListState extends State<GenresList> {
             if (itemList.isEmpty) {
               return Center(child: Text('No data available'));
             }
+
             print("Selected Category: $catofuser");
+
             var filteredMovies = itemList.where((doc) {
               var moviedet = doc.data() as Map<String, dynamic>;
               List<String>? categories = moviedet['categories']?.map((cat) => cat.toLowerCase().trim()).cast<String>().toList();
               print("Categories from DB: $categories and cat types ${categories.runtimeType}");
 
+              // Get movie expiration date from database
+              String movieexpdate = moviedet['expiryDate'];
+              DateTime expdate = DateTime.parse(movieexpdate);
 
-              if (categories != null && categories.length >= 4) {
-                print("Fourth category: ${categories[3]}");
+              // Get movie release date from database
+              String releaseDate = moviedet['date'] ?? '';
+              DateTime relDate = DateTime.parse(releaseDate);
+
+              // Current date
+              DateTime currentDate = DateTime.now();
+
+              // Add condition to check if the current date is between release and expiration date
+              if (currentDate.isBefore(expdate) && !relDate.isAfter(currentDate)) {
+                return categories != null && categories.contains(catofuser);
               } else {
-                print("Less than 4 categories");
+                return false;
               }
-
-              return categories != null && categories.contains(catofuser);
             }).toList();
-
 
             print("Filtered Movies: $filteredMovies");
 
@@ -78,8 +90,13 @@ class _GenresListState extends State<GenresList> {
                   var moviedet = doc.data() as Map<String, dynamic>;
                   String imgname = moviedet['imgname'] ?? 'Unknown seats';
                   String movieName = moviedet['movieName'] ?? 'Unknown Bus';
-                  String movieid=doc.id;
-                  double rating = moviedet['rating'] ?? 0.0;
+                  String movieid = doc.id;
+
+                  String rating = moviedet["rating"] ?? "5";
+                  double ratings = double.parse(rating);
+
+                  String reviews = moviedet["reviews"] ?? "[]";
+                  var decodedReviews = List<Map<String, dynamic>>.from(jsonDecode(reviews));
 
                   return FutureBuilder<String>(
                     future: serv().downloadurl(imgname),
@@ -95,15 +112,12 @@ class _GenresListState extends State<GenresList> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             GestureDetector(
-                              onTap: (){
+                              onTap: () {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) =>
-                                        DetailScreen(movieename: movieid)),
-
+                                      builder: (context) => DetailScreen(movieename: movieid)),
                                 );
-
                               },
                               child: SizedBox(
                                 width: double.infinity,
@@ -121,11 +135,14 @@ class _GenresListState extends State<GenresList> {
                                   child: Text(
                                     "$movieName \t",
                                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                                    overflow: TextOverflow.ellipsis, // or TextOverflow.fade depending on your preference
+                                    overflow: TextOverflow.ellipsis,
                                     maxLines: 2, // adjust as necessary
                                   ),
                                 ),
-                                Text("4.5",style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
+                                Text(
+                                  rating,
+                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                ),
                                 Icon(
                                   Icons.star,
                                   color: Colors.amber,
@@ -133,7 +150,6 @@ class _GenresListState extends State<GenresList> {
                                 ),
                               ],
                             ),
-
                           ],
                         );
                       }

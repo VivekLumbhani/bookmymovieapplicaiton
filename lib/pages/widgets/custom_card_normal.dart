@@ -1,4 +1,6 @@
 
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:nookmyseatapplication/pages/detail_screen.dart';
@@ -37,6 +39,10 @@ class CustomCardNormal extends StatelessWidget {
               String moviename = moviedet['movieName'] ?? 'Unknown Bus';
               String imgname = moviedet['imgname'] ?? 'Unknown seats';
               String movieexpdate = moviedet['expiryDate'];
+              String ratings=moviedet["rating"]??"5";
+              String reviews=moviedet["reviews"]??"[]";
+              var decodedReviews = List<Map<String, dynamic>>.from(jsonDecode(reviews));
+
 
               DateTime expdate = DateTime.parse(movieexpdate);
               DateTime currentDate = DateTime.now();
@@ -101,7 +107,7 @@ class CustomCardNormal extends StatelessWidget {
                                       ),
                                       SizedBox(width: 4),
                                       Text(
-                                        '4.5',
+                                        ratings,
                                         style: TextStyle(
                                           color: Colors.black,
                                           fontSize: 16,

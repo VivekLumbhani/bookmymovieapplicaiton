@@ -115,18 +115,32 @@ class _MainScreenState extends State<MainScreen> {
                       ],
                     ),
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            // Padding(
+            //   padding: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
+            //   child: Column(
+            //     children: [
+            //     Row(
+            //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 30),
+                  child: Column(
                     children: [
-                      Text(
-                        "Upcoming Movies",
-                        style: TextStyle(color: Colors.black,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Upcoming Movies,Stay tuned!",
+                              style: TextStyle(color: Colors.black,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
                     ],
                   ),
+                ),
                   SizedBox(
                     height: 200,
                     child: PageView.builder(
@@ -205,14 +219,7 @@ class _MainScreenState extends State<MainScreen> {
                                 fontSize: 20,
                               ),
                             ),
-                            Text(
-                              "See all",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.w300,
-                                fontSize: 17,
-                              ),
-                            ),
+
                           ],
                         ),
                       ],
@@ -232,14 +239,6 @@ class _MainScreenState extends State<MainScreen> {
                                 color: Colors.black,
                                 fontWeight: FontWeight.w500,
                                 fontSize: 20,
-                              ),
-                            ),
-                            Text(
-                              "See all",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 17,
                               ),
                             ),
                           ],

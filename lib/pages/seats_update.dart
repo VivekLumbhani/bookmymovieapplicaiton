@@ -246,17 +246,21 @@ class _SeatLayoutTryState extends State<SeatsUpdate> {
                     child: ElevatedButton(
                       onPressed: () {
                         print("selected seats $selectedSeats and all seats were $allSeatsofbookings  price is $totalBill");
-                        List<String> decodedseats = (allSeatsofbookings as List<dynamic>).map((e) => e.toString()).toList();
+                        List<String> decodedseats = jsonDecode(allSeatsofbookings!).cast<String>();
                         List<String> decodedusersoldseats = (finalseatsbyusertocheck as List<dynamic>).map((e) => e.toString()).toList();
 
+                        decodedseats.addAll(selectedSeats);
+                        decodedseats.removeWhere((seat) => decodedusersoldseats.contains(seat));
 
+                        var jsonecoded=jsonEncode(decodedseats);
+                        print("updating value will be $jsonecoded and tyep is ${jsonecoded.runtimeType}" );
                         print("selected seats ${selectedSeats.runtimeType} and all seats were ${allSeatsofbookings.runtimeType}  price is ${totalBill.runtimeType}");
 
                         print("selected seats $selectedSeats and all seasts were $allSeatsofbookings  price is $totalBill");
 
 
                         print("users old seats $decodedusersoldseats and type ${decodedusersoldseats.runtimeType}");
-                        print("all seats are $decodedseats and type ${decodedseats.runtimeType}");
+                        print("Final eat are $decodedseats and its type ${decodedseats.runtimeType}");
 
                         print("selected seats ${selectedSeats.runtimeType} and all seasts were ${allSeatsofbookings.runtimeType}  price is ${totalBill.runtimeType}");
 

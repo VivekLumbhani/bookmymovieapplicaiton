@@ -485,6 +485,8 @@ class _admin extends State<admin> {
                             .add({
                           'movieName': movieNameValue,
                           'date': dateValue,
+                          "rating":"5",
+                          "reviews":"[]",
                           'expiryDate': expiryDateValue,
                           'imgname': imgpath,
                           'theaters': theatersDataJson,

@@ -23,7 +23,7 @@ class _giveRivewsState extends State<giveRivews> {
   late TextEditingController reviewController;
   late Future<DocumentSnapshot> _movieSnapshot;
   String? username;
-
+  String? ratingindb;
   @override
   void initState() {
     super.initState();
@@ -75,8 +75,9 @@ class _giveRivewsState extends State<giveRivews> {
           String imgname = data['imgname'] ?? '';
           String movieName = data['movieName'] ?? '';
           String reviews = data["reviews"] ?? "[]"; // Initialize reviews to an empty list if it's null
-          String ratingindb = data["rating"] ?? "]"; // Initialize reviews to an empty list if it's null
+          ratingindb = data["rating"] ?? "]"; // Initialize reviews to an empty list if it's null
 
+          print("ratinf from db is $ratingindb and type ios ${ratingindb.runtimeType}");
 
 
           return SingleChildScrollView(
@@ -115,7 +116,8 @@ class _giveRivewsState extends State<giveRivews> {
                                       borderRadius: BorderRadius.circular(18),
                                       gradient: LinearGradient(
                                         colors: [
-                                          Colors.transparent,
+                                          Colors.transparent, // Starting color (fully transparent)
+                                          Colors.transparent.withOpacity(0.1), // Ending color (slightly transparent)
                                         ],
                                         begin: Alignment.bottomCenter,
                                         end: Alignment.topCenter,
@@ -180,51 +182,58 @@ class _giveRivewsState extends State<giveRivews> {
                 ),
                 SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: () {
-
+                  onPressed: () async {
                     String description = reviewController.text;
 
-                    double rateofdb=double.parse(ratingindb);
-                    double addition=rateofdb+rating;
+                    // Retrieve the current rating from the state
+                    double currentRating = rating;
 
-                    double avgrating=addition/2;
+                    var decodedReviews = jsonDecode(reviews);
 
 
-                    var decodedReviews = List<Map<String, dynamic>>.from(jsonDecode(reviews));
+                    double rateofdb=double.parse(ratingindb!);
+
+
+                    print("rate od db $rateofdb and type is ${rateofdb.runtimeType}");
+                    print("cy=urrent rate is $currentRating and type is ${currentRating.runtimeType}");
+
+                    double newTotalRating = currentRating + rateofdb ;
+                    print("cy=newTotalRating rate is $newTotalRating and type is ${newTotalRating.runtimeType}");
+
+                    double newAverageRating = newTotalRating/2;
+                    print("cy=newAverageRating rate is $newAverageRating and type is ${newAverageRating.runtimeType}");
+
+
+
                     decodedReviews.add({
-                      "rating": rating.toString(),
+                      "rating": newAverageRating.toString(),
                       "description": description.toString(),
                       "user": username
                     });
 
-                    print("all reviews are $decodedReviews");
-
-                    // Update the reviews field in Firestore
-                    FirebaseFirestore.instance
+                    // Update the reviews and rating fields in Firestore
+                    await FirebaseFirestore.instance
                         .collection('buscollections')
                         .doc(widget.movieId)
-                        .update({'reviews': jsonEncode(decodedReviews)});
-                    FirebaseFirestore.instance
-                        .collection('buscollections')
-                        .doc(widget.movieId)
-                        .update({'rating': avgrating.toString()});
+                        .update({
+                      'reviews': jsonEncode(decodedReviews),
+                      'rating': newAverageRating.toString(),
+                    });
 
                     // Clear the review text field after submission
                     reviewController.clear();
 
-                    // Show a snackbar to indicate successful submission
-
+                    // Show a dialog to indicate successful submission
                     showDialog(
                       context: context,
                       builder: (BuildContext context) {
                         return AlertDialog(
                           title: Text('Success'),
-                          content: Text('Thank you for your Review '),
+                          content: Text('Thank you for your review'),
                           actions: <Widget>[
                             TextButton(
                               child: Text('OK'),
                               onPressed: () {
-
                                 Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(builder: (context) => HomeScreen()),

@@ -120,88 +120,91 @@ class _ChatsScreenState extends State<chatsScreen> {
       body: Container(
         height: MediaQuery.of(context).size.height, // Provide a finite height constraint
 
-        child: Column(
+        child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Column(
 
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(
-                  left: 20, right: 20, top: 50, bottom: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  search
-                      ? Expanded(
-                          child: TextField(
-                            onChanged: (value) {
-                              initiateSearch(value.toUpperCase());
-                            },
-                            decoration: InputDecoration(
-                                border: InputBorder.none,
-                                hintText: "Search User",
-                                hintStyle: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w500)),
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(
+                    left: 20, right: 20, top: 50, bottom: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    search
+                        ? Expanded(
+                            child: TextField(
+                              onChanged: (value) {
+                                initiateSearch(value.toUpperCase());
+                              },
+                              decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  hintText: "Search User",
+                                  hintStyle: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w500)),
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                          )
+                        : Text(
+                            "Chats Screen",
                             style: TextStyle(
                                 color: Colors.black,
-                                fontWeight: FontWeight.w500),
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold),
                           ),
-                        )
-                      : Text(
-                          "Chats Screen",
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold),
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          search = !search; // Toggle search value
+                        });
+                      },
+                      child: Container(
+                        padding: EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: Colors.black45,
+                          borderRadius: BorderRadius.circular(20),
                         ),
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        search = !search; // Toggle search value
-                      });
-                    },
-                    child: Container(
-                      padding: EdgeInsets.all(6),
-                      decoration: BoxDecoration(
-                        color: Colors.black45,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child:search? Icon(
-                      Icons.close,
+                        child:search? Icon(
+                        Icons.close,
 
-                      color: Colors.white,
-                      ): Icon(
-                        Icons.search,
                         color: Colors.white,
+                        ): Icon(
+                          Icons.search,
+                          color: Colors.white,
+                        ),
                       ),
-                    ),
-                  )
-                ],
-              ),
-            ),
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 30, horizontal: 20),
-              width: MediaQuery.of(context).size.width,
-              height: search
-                  ? MediaQuery.of(context).size.height / 1.19
-                  : MediaQuery.of(context).size.height / 1.15,
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(20),
-                      topRight: Radius.circular(20))),
-              child: search
-                  ? ListView(
-                      padding: EdgeInsets.only(left: 10, right: 10),
-                      primary: false,
-                      shrinkWrap: true,
-                      children: tempSearchStore.map((element) {
-                        return buildResultCard(element);
-                      }).toList(),
                     )
-                  : ChatRoomList()
-            )
-          ],
+                  ],
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 30, horizontal: 20),
+                width: MediaQuery.of(context).size.width,
+                height: search
+                    ? MediaQuery.of(context).size.height / 1.19
+                    : MediaQuery.of(context).size.height / 1.15,
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20))),
+                child: search
+                    ? ListView(
+                        padding: EdgeInsets.only(left: 10, right: 10),
+                        primary: false,
+                        shrinkWrap: true,
+                        children: tempSearchStore.map((element) {
+                          return buildResultCard(element);
+                        }).toList(),
+                      )
+                    : ChatRoomList()
+              )
+            ],
+          ),
         ),
       ),
     );

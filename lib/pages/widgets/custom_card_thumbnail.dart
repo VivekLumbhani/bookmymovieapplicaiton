@@ -1,7 +1,10 @@
 
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:nookmyseatapplication/pages/choose.dart';
+import 'package:nookmyseatapplication/pages/detail_screen.dart';
 
 import '../../colors.dart';
 import '../serv.dart';
@@ -42,7 +45,11 @@ class _CustomCardThumnailState extends State<CustomCardThumnail> {
               String movieid = doc.id ?? 'not found';
               String moviename = moviedet['movieName'] ?? 'Unknown Bus';
               String releaseDate=moviedet['date']??'';
+              String ratings=moviedet["rating"]??"5";
+              String reviews=moviedet["reviews"]??"[]";
+              var decodedReviews = List<Map<String, dynamic>>.from(jsonDecode(reviews));
 
+              var numofvotes=decodedReviews.length>0?decodedReviews.length:1;
               String imgname = moviedet['imgname'] ?? 'Unknown seats';
               String movieexpdate = moviedet['expiryDate'];
 
@@ -73,7 +80,7 @@ class _CustomCardThumnailState extends State<CustomCardThumnail> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) =>
-                                      chooseshow(movieename: movieid),
+                                      DetailScreen(movieename: movieid),
                                 ),
                               );
                             },
@@ -114,7 +121,7 @@ class _CustomCardThumnailState extends State<CustomCardThumnail> {
                                       ),
                                       SizedBox(width: 4),
                                       Text(
-                                        '4.5', // Static rating
+                                        ratings, // Static rating
                                         style: TextStyle(
                                           color: Colors.black,
                                           fontSize: 14,
@@ -128,7 +135,7 @@ class _CustomCardThumnailState extends State<CustomCardThumnail> {
                                       ),
                                       SizedBox(width: 4),
                                       Text(
-                                        '1000', // Static total votes
+                                        numofvotes.toString(), // Static total votes
                                         style: TextStyle(
                                           color: Colors.black,
                                           fontSize: 14,
