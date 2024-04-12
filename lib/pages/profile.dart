@@ -6,6 +6,7 @@ import 'package:nookmyseatapplication/pages/booked.dart';
 import 'package:nookmyseatapplication/pages/chats.dart';
 import 'package:nookmyseatapplication/pages/login_or_signup.dart';
 import 'package:nookmyseatapplication/pages/loginpage.dart';
+import 'package:nookmyseatapplication/pages/qr_scanner.dart';
 
 class profile extends StatefulWidget {
   const profile({Key? key}) : super(key: key);
@@ -17,8 +18,8 @@ class profile extends StatefulWidget {
 class _ProfileState extends State<profile> {
   String? name;
   String? phoneNumber;
-
   String? useremail;
+
   @override
   void initState() {
     super.initState();
@@ -27,7 +28,7 @@ class _ProfileState extends State<profile> {
 
   Future<void> fetchUserData() async {
     final username = FirebaseAuth.instance.currentUser;
-    useremail=username!.email.toString();
+    useremail = username!.email.toString();
 
     if (useremail != null) {
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
@@ -48,93 +49,108 @@ class _ProfileState extends State<profile> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              CircleAvatar(
-                radius: 50,
-                backgroundImage: AssetImage('images/unknown.jpeg'), // Replace with actual image path
-              ),
-              SizedBox(height: 20),
-              Text(
-                name ?? 'Loading...', // Display loading if name is not fetched yet
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 10),
-              Text(
-                useremail ?? 'Loading...', // Display loading if name is not fetched yet
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 10),
-              Text(
-                phoneNumber ?? 'Loading...', // Display loading if phone number is not fetched yet
-                style: TextStyle(fontSize: 18),
-              ),
-              SizedBox(height: 40),
-              ListTile(
-                leading: Icon(Icons.chat),
-                title: Text('Chats'),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => chatsScreen(),
-                    ),
-                  );
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.book),
-                title: Text('My Bookings'),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => booked(),
-                    ),
-                  );
-                },
-              ),
-              // Add more list tiles for additional options
-              ListTile(
-                leading: Icon(Icons.feedback_outlined),
-                title: Text('Feedback'),
-                onTap: () {
-                  showFeedbackDialog(context);
-                },
-              ),
-              Spacer(),
-              ElevatedButton(
-                onPressed: () async {
-                  await FirebaseAuth.instance.signOut();
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) =>LoginAndSignup() ),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  primary: Colors.red,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+      body: SingleChildScrollView(
+        child: Container(
+          // Add a finite height constraint
+          height: MediaQuery.of(context).size.height,
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircleAvatar(
+                    radius: 50,
+                    backgroundImage:
+                    AssetImage('images/unknown.jpeg'), // Replace with actual image path
                   ),
-                ),
-                child: SizedBox(
-                  width: double.infinity,
-                  child: Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Text(
-                        'Logout',
-                        style: TextStyle(fontSize: 16),
+                  SizedBox(height: 20),
+                  Text(
+                    name ?? 'Loading...', // Display loading if name is not fetched yet
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    useremail ?? 'Loading...', // Display loading if name is not fetched yet
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    phoneNumber ?? 'Loading...', // Display loading if phone number is not fetched yet
+                    style: TextStyle(fontSize: 18),
+                  ),
+                  SizedBox(height: 40),
+                  ListTile(
+                    leading: Icon(Icons.chat),
+                    title: Text('Chats'),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => chatsScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.book),
+                    title: Text('My Bookings'),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => booked(),
+                        ),
+                      );
+                    },
+                  ),
+                  if (useremail == "kruti@gmail.com" || useremail == "vivek@gmail.com")
+                    ListTile(
+                      leading: Icon(Icons.qr_code_scanner_sharp),
+                      title: Text('QR Scanner'),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => QrCodeScanner(),
+                          ),
+                        );
+                      },
+                    ),
+                  ListTile(
+                    leading: Icon(Icons.feedback_outlined),
+                    title: Text('Feedback'),
+                    onTap: () {
+                      showFeedbackDialog(context);
+                    },
+                  ),
+                  Spacer(),
+                  ElevatedButton(
+                    onPressed: () async {
+                      await FirebaseAuth.instance.signOut();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.red,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Text(
+                            'Logout',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),
@@ -183,7 +199,7 @@ class _ProfileState extends State<profile> {
             ElevatedButton(
               child: Text('Submit'),
               onPressed: () {
-                // return AlertDialog()
+                // Handle submission logic here
                 Navigator.of(context).pop();
               },
             ),

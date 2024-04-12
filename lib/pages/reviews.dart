@@ -74,8 +74,8 @@ class _giveRivewsState extends State<giveRivews> {
 
           String imgname = data['imgname'] ?? '';
           String movieName = data['movieName'] ?? '';
-          String reviews = data["reviews"] ?? "[]"; // Initialize reviews to an empty list if it's null
-          ratingindb = data["rating"] ?? "]"; // Initialize reviews to an empty list if it's null
+          String reviews = data["reviews"] ?? "[]";
+          ratingindb = data["rating"] ?? "]";
 
           print("ratinf from db is $ratingindb and type ios ${ratingindb.runtimeType}");
 
@@ -200,11 +200,11 @@ class _giveRivewsState extends State<giveRivews> {
                     double newTotalRating = currentRating + rateofdb ;
                     print("cy=newTotalRating rate is $newTotalRating and type is ${newTotalRating.runtimeType}");
 
-                    double newAverageRating = newTotalRating/2;
+                    double newAverageRating = double.parse((newTotalRating / 2).toStringAsFixed(1));
                     print("cy=newAverageRating rate is $newAverageRating and type is ${newAverageRating.runtimeType}");
 
-
-
+                    //
+                    //
                     decodedReviews.add({
                       "rating": newAverageRating.toString(),
                       "description": description.toString(),
@@ -220,10 +220,7 @@ class _giveRivewsState extends State<giveRivews> {
                       'rating': newAverageRating.toString(),
                     });
 
-                    // Clear the review text field after submission
                     reviewController.clear();
-
-                    // Show a dialog to indicate successful submission
                     showDialog(
                       context: context,
                       builder: (BuildContext context) {

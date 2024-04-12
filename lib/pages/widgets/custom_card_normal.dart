@@ -1,15 +1,34 @@
-
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:nookmyseatapplication/pages/detail_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../serv.dart';
 
-class CustomCardNormal extends StatelessWidget {
-
+class CustomCardNormal extends StatefulWidget {
   const CustomCardNormal();
+
+  @override
+  State<CustomCardNormal> createState() => _CustomCardNormalState();
+}
+
+class _CustomCardNormalState extends State<CustomCardNormal> {
+  String selectedCity = '';
+
+  Future<void> loadSelectedCity() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      selectedCity = prefs.getString("selectedCity") ?? "";
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadSelectedCity();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,29 +49,58 @@ class CustomCardNormal extends StatelessWidget {
 
         var itemList = snapshot.data!.docs;
 
+
+        itemList.sort((a, b) {
+          var ratingA = double.parse(a['rating'] ?? '0');
+          var ratingB = double.parse(b['rating'] ?? '0');
+          return ratingB.compareTo(ratingA);
+        });
+
+
         return SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
             children: itemList.map((doc) {
               var moviedet = doc.data() as Map<String, dynamic>;
-              String movieid = doc.id ?? 'not found';
               String moviename = moviedet['movieName'] ?? 'Unknown Bus';
               String imgname = moviedet['imgname'] ?? 'Unknown seats';
               String movieexpdate = moviedet['expiryDate'];
-              String ratings=moviedet["rating"]??"5";
-              String reviews=moviedet["reviews"]??"[]";
-              var decodedReviews = List<Map<String, dynamic>>.from(jsonDecode(reviews));
+              String releaseDate = moviedet['date'] ?? '';
 
+              String ratings = moviedet["rating"] ?? "5";
+              String reviews = moviedet["reviews"] ?? "[]";
+              var decodedReviews = List<Map<String, dynamic>>.from(jsonDecode(reviews));
+              DateTime relDate = DateTime.parse(releaseDate);
+
+              final theatersData = moviedet["theaters"] ?? "[]";
+              final theatersInSelectedCity = jsonDecode(theatersData).where((theater) => theater["city"] == selectedCity).toList();
+
+              if (theatersInSelectedCity.isEmpty) {
+                return Container();
+              }
+
+              theatersInSelectedCity.forEach((theater) {
+                print("movie name " + moviename);
+
+                print("Cinema Name: ${theater["cinemaName"]}");
+                print("City: ${theater["city"]}");
+                print("Dynamic Times:");
+                for (var time in theater["dynamicTimes"]) {
+                  print("${time["hour"]}:${time["minute"]}");
+                }
+                print("Seatings:");
+                print("Upper Part: Row - ${theater["seatings"]["upperPart"]["row"]}, Column - ${theater["seatings"]["upperPart"]["column"]}, Price - ${theater["seatings"]["upperPart"]["price"]}");
+                print("Lower Part: Row - ${theater["seatings"]["lowerPart"]["row"]}, Column - ${theater["seatings"]["lowerPart"]["column"]}, Price - ${theater["seatings"]["lowerPart"]["price"]}");
+                print("\n");
+              });
 
               DateTime expdate = DateTime.parse(movieexpdate);
               DateTime currentDate = DateTime.now();
 
               return FutureBuilder<String>(
                 future: serv().downloadurl(imgname),
-                builder: (BuildContext context,
-                    AsyncSnapshot<String> imageSnapshot) {
-                  if (imageSnapshot.connectionState ==
-                      ConnectionState.waiting) {
+                builder: (BuildContext context, AsyncSnapshot<String> imageSnapshot) {
+                  if (imageSnapshot.connectionState == ConnectionState.waiting) {
                     return CircularProgressIndicator();
                   } else if (imageSnapshot.hasError) {
                     return Text('Error: ${imageSnapshot.error}');
@@ -60,17 +108,17 @@ class CustomCardNormal extends StatelessWidget {
                     return Text('No image data available');
                   } else {
                     print("movie name is $imgname");
-                    if (currentDate.isBefore(expdate)) {
+                    if (currentDate.isBefore(expdate) && !relDate.isAfter(currentDate)) {
                       return GestureDetector(
                         onTap: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) =>
-                                    DetailScreen(movieename: movieid)),
+                              builder: (context) => DetailScreen(movieename: doc.id),
+                            ),
                           );
                         },
-                        child:Column(
+                        child: Column(
                           children: [
                             Expanded(
                               child: Container(
@@ -114,8 +162,7 @@ class CustomCardNormal extends StatelessWidget {
                                           fontWeight: FontWeight.bold,
                                         ),
                                         overflow: TextOverflow.ellipsis,
-                                        maxLines: 2, // Specify maximum number of lines to show
-
+                                        maxLines: 2,
                                       ),
                                     ],
                                   ),
@@ -124,7 +171,6 @@ class CustomCardNormal extends StatelessWidget {
                             ),
                           ],
                         ),
-
                       );
                     } else {
                       return Container();

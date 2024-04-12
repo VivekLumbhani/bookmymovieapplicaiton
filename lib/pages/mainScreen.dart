@@ -7,6 +7,7 @@ import 'package:nookmyseatapplication/models/getuser.dart';
 import 'package:nookmyseatapplication/models/moviesget.dart';
 import 'package:nookmyseatapplication/pages/genreList.dart';
 import 'package:nookmyseatapplication/pages/navbar.dart';
+import 'package:nookmyseatapplication/pages/qr_scanner.dart';
 import 'package:nookmyseatapplication/pages/serv.dart';
 import 'package:nookmyseatapplication/pages/widgets/custom_card_normal.dart';
 import 'package:nookmyseatapplication/pages/widgets/custom_card_thumbnail.dart';
@@ -44,7 +45,6 @@ class _MainScreenState extends State<MainScreen> {
     super.initState();
     loadSelectedCity();
     loadData();
-
   }
   Future<void> loadData() async {
     final List<Map<String, dynamic>> data = await Firebaseapitest().getUpcomingData();
@@ -300,6 +300,7 @@ class _MainScreenState extends State<MainScreen> {
                 context,
                 MaterialPageRoute(
                   builder: (context) =>
+                      // QrCodeScanner()
                       GenresList(categoryof:genresList[index].movieName.toString(),)
                   ),
               )

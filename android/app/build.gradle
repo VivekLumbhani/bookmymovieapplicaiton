@@ -44,7 +44,7 @@ android {
         applicationId "com.example.nookmyseatapplication"
         minSdkVersion 21
         multiDexEnabled true
-        targetSdkVersion 34
+        targetSdkVersion 31
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }

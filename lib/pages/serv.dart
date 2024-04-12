@@ -1,11 +1,13 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
-
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:firebase_core/firebase_core.dart' as firebase_core;
+
 class serv{
   final firebase_storage.FirebaseStorage storage=firebase_storage.FirebaseStorage.instance;
+
+
   Future<void> uploadfile(String filepath, String filename)async{
     File file=File(filepath);
     try{

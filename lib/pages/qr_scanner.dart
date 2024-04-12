@@ -1,120 +1,102 @@
-// import 'package:flutter/material.dart';
-// import 'package:mobile_scanner/mobile_scanner.dart';
-// // import 'package:nookmyseatapplication/pages/result_screen.dart';
-//
-// class QrScanner extends StatefulWidget {
-//   const QrScanner({Key? key}) : super(key: key);
-//
-//   @override
-//   State<QrScanner> createState() => _QrScannerState();
-// }
-//
-// class _QrScannerState extends State<QrScanner> {
-//   final bgColor = Color(0xfffafafa);
-//   bool isFlashOn=false;
-//   bool isfrontCameraOn=false;
-//
-//   bool isScanComplete=false;
-//
-//   void closeScreen(){
-//     isScanComplete=false;
-//
-//   }
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       drawer: Drawer(
-//
-//       ),
-//       backgroundColor: bgColor,
-//       appBar: AppBar(
-//
-//         centerTitle: true,
-//         title: Text(
-//           "Qr Scanner screen",
-//           style: TextStyle(
-//               color: Colors.black87,
-//               fontWeight: FontWeight.bold,
-//               letterSpacing: 1),
-//         ),
-//       ),
-//       body: Container(
-//         width: double.infinity,
-//         padding: EdgeInsets.all(16),
-//         child: Column(
-//           children: [
-//             Expanded(
-//                 child: Column(
-//               mainAxisAlignment: MainAxisAlignment.center,
-//               children: [
-//                 Text(
-//                   "Place the Qr code in the area",
-//                   style: TextStyle(
-//                       color: Colors.black87,
-//                       fontSize: 18,
-//                       fontWeight: FontWeight.bold,
-//                       letterSpacing: 1),
-//                 ),
-//                 SizedBox(
-//                   height: 10,
-//                 ),
-//                 Text(
-//                   "Scanning will be started automatically",
-//                   style: TextStyle(fontSize: 16, color: Colors.black54),
-//                 ),
-//               ],
-//             )),
-//             Expanded(
-//                 flex: 4,
-//                 child:Stack(
-//                   children: [
-//                     MobileScanner(
-//                       onDetect: (barcode) {
-//                         if (isScanComplete) {
-//                           String code = barcode.raw ?? '---';
-//                           isScanComplete = true;
-//                           // Navigator.push(
-//                           //   context,
-//                           //   MaterialPageRoute(
-//                           //     builder: (context) => ResultOfQrScreen(
-//                           //       closeScreen: closeScreen,
-//                           //       code: code,
-//                           //     ),
-//                           //   ),
-//                           // );
-//                         }
-//                       },
-//                     ),
-//                     Positioned(
-//                       top: 0.0, // Adjust position as needed
-//                       left: 0.0, // Adjust position as needed
-//                       right: 0.0, // Adjust position as needed
-//                       bottom: 0.0, // Adjust position as needed
-//                       child: Container(
-//                         color: Colors.black.withOpacity(0.3), // Adjust opacity for desired transparency
-//                         // You can add other widgets here for the overlay content
-//                       ),
-//                     ),
-//                   ],
-//                 ),
-//
-//
-//             ),
-//             Expanded(
-//                 child: Container(
-//               alignment: Alignment.center,
-//               child: Text(
-//                 "Developed by me",
-//                 style: TextStyle(
-//                     color: Colors.black87,
-//                     fontSize: 18,
-//                     fontWeight: FontWeight.bold,
-//                     letterSpacing: 1),
-//               ),
-//             )),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
+import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'package:nookmyseatapplication/pages/ResultQr.dart';
+import 'package:qr_code_scanner/qr_code_scanner.dart';
+
+import 'permission_of_qr.dart';
+
+
+
+class QrCodeScanner extends StatefulWidget {
+  const QrCodeScanner({Key? key}) : super(key: key);
+
+  @override
+  State<QrCodeScanner> createState() => _QrCodeScannerState();
+}
+
+class _QrCodeScannerState extends State<QrCodeScanner> {
+  final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
+  Barcode? result;
+  QRViewController? controller;
+
+  @override
+  void dispose() {
+    controller?.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('QR Code Scanner'),
+      ),
+      body: Stack(
+        children: <Widget>[
+          QRView(
+            key: qrKey,
+            onQRViewCreated: _onQRViewCreated,
+            overlay: QrScannerOverlayShape(
+              borderColor: Colors.white,
+              borderRadius: 10,
+              borderWidth: 10,
+              cutOutSize: MediaQuery.of(context).size.width / 2,
+            ),
+          ),
+          Positioned(
+            bottom: 10,
+            left: 10,
+            child: Text(
+              result?.code ?? '',
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: 10,
+            right: 10,
+            child: FloatingActionButton.extended(
+              onPressed: (result != null) ? null : _scanQRCode,
+              label: Text(result != null ? 'Scan Again' : 'Scan QR Code'),
+              icon: Icon(result != null ? Icons.refresh : Icons.scanner),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  void _onQRViewCreated(QRViewController controller) {
+    this.controller = controller;
+    controller.scannedDataStream.listen((scanData) {
+      setState(() => result = scanData);
+      print('Scanned QR code data: ${scanData.code} and type is ${scanData.runtimeType}');  // Add this line
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>ResultOfQrScreen(code: scanData.code.toString(),)
+          // GenresList(categoryof:genresList[index].movieName.toString(),)
+        ),
+      );
+
+
+
+    });
+  }
+
+  void _scanQRCode() async {
+    if (await requestCameraPermission()) {
+      // Check permission granted
+      controller?.scannedDataStream.listen((scanData) {
+        setState(() => result = scanData);
+      });
+    }
+  }
+
+
+
+}

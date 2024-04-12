@@ -1,6 +1,5 @@
 import 'dart:ui';
 
-import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
@@ -54,11 +53,6 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
 
     super.initState();
-    AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
-      if (!isAllowed) {
-        AwesomeNotifications().requestPermissionToSendNotifications();
-      }
-    });
     startTimer(15);
 
     loadSelectedCity();
@@ -67,7 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> loadSelectedCity() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      selectedCity = prefs.getString("selectedCity") ?? "";
+      selectedCity = prefs.getString("selectedCity") ?? "surat";
     });
   }
 
@@ -78,64 +72,76 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void startTimer(int durationInSeconds) async {
     await Future.delayed(Duration(seconds: durationInSeconds), () async {
-      await AwesomeNotifications().createNotification(
-        content: NotificationContent(
-          id: 1, // Unique ID for the notification
-          channelKey: 'timer_channel',
-          title: 'Timer Completed!',
-          body: 'Your timer of $durationInSeconds seconds has finished.',
-        ),
-      );
     });
   }
 
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      drawer: navbar(email: username!.email.toString()),
-      appBar: AppBar(
-        title: GestureDetector(
-          onTap: () async {
-            final selected = await showSearch(
-              context: context,
-              delegate: CustomDelegate(),
-            );
-            if (selected != null && selected is String) {
-              setState(() {
-                selectedCity = selected;
-              });
-              saveSelectedCity(selected);
-            }
-          },
-          child: Row(
+    return Stack(
+      children: [
+        Scaffold(
+          drawer: navbar(email: username!.email.toString()),
+          appBar: AppBar(
+            title: GestureDetector(
+              onTap: () async {
+                final selected = await showSearch(
+                  context: context,
+                  delegate: CustomDelegate(),
+                );
+                if (selected != null && selected is String) {
+                  setState(() {
+                    selectedCity = selected;
+                  });
+                  saveSelectedCity(selected);
+                }
+              },
+              child: Row(
+                children: [
+                  Text(selectedCity.isNotEmpty ? selectedCity : 'Select City'),
+                  Icon(Icons.arrow_forward_ios),
+                ],
+              ),
+            ),
+          ),
+          backgroundColor: kBackgroundColor,
+          bottomNavigationBar: BottomNavigationBar(
+            currentIndex: currentIndex,
+            onTap: onIconClicked,
+            type: BottomNavigationBarType.fixed,
+            backgroundColor: Colors.white,
+            selectedItemColor: Colors.red,
+            unselectedItemColor: Colors.black,
+            unselectedIconTheme: IconThemeData(color: Colors.black),
+            items: bottomNavBarItems,
+          ),
+          body: PageView(
+            controller: pageController,
+            physics: NeverScrollableScrollPhysics(),
             children: [
-              Text(selectedCity.isNotEmpty ? selectedCity : 'Select City'),
-              Icon(Icons.arrow_forward_ios),
+              MainScreen(),
+              explore(),
+              profile(),
             ],
           ),
         ),
-      ),
-      backgroundColor: kBackgroundColor,
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: currentIndex,
-        onTap: onIconClicked,
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.white,
-        selectedItemColor: Colors.red,
-        unselectedItemColor: Colors.black,
-        unselectedIconTheme: IconThemeData(color: Colors.black),
-        items: bottomNavBarItems,
-      ),
-      body: PageView(
-        controller: pageController,
-        physics: NeverScrollableScrollPhysics(),
-        children: [
-          MainScreen(),
-          explore(),
-          profile(),
-        ],
-      ),
+        if (selectedCity.isEmpty) // Show modal dialog if no city is selected
+          BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+            child: AlertDialog(
+              title: Text('Select City'),
+              content: Text('Please select a city to continue.'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text('OK'),
+                ),
+              ],
+            ),
+          ),
+      ],
     );
   }
 

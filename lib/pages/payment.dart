@@ -64,390 +64,393 @@ class _PaymentScreenState extends State<PaymentScreen> {
           centerTitle: true,
         ),
         body: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Center(
-              child: Column(
-                children: [
-                  SizedBox(height: 40,),
-                  Container(
-                    width: size.width,
-                    height: 70,
-                    decoration: BoxDecoration(
-                      border: _type == 1
-                          ? Border.all(width: 1, color: const Color(0xFFDB3022))
-                          : Border.all(width: 0.3, color: Colors.grey),
-                      borderRadius: BorderRadius.circular(5),
-                      color: Colors.transparent,
-                    ),
-                    child: Center(
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 20.0),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Row(
-                                children: [
-                                  Radio(
-                                    value: 1,
-                                    groupValue: _type,
-                                    onChanged: _handleRadio,
-                                    activeColor: Color(0xFFDB3022),
-                                  ),
-                                  Text(
-                                    "Amazon Pay",
-                                    style: _type == 1
-                                        ? TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.black,
-                                    )
-                                        : TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Image.asset(
-                              "assets/paymentproviders/amazonpay.png",
-                              width: 120,
-                              height: 22,
-                              fit: BoxFit.cover,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  SizedBox(height: 15,),
-                  Container(
-                    width: size.width,
-                    height: 70,
-                    decoration: BoxDecoration(
-                      border: _type == 1
-                          ? Border.all(width: 1, color: const Color(0xFFDB3022))
-                          : Border.all(width: 0.3, color: Colors.grey),
-                      borderRadius: BorderRadius.circular(5),
-                      color: Colors.transparent,
-                    ),
-                    child: Center(
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 20.0),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Row(
-                                children: [
-                                  Radio(
-                                    value: 2,
-                                    groupValue: _type,
-                                    onChanged: _handleRadio,
-                                    activeColor: Color(0xFFDB3022),
-                                  ),
-                                  Text(
-                                    "Debit/Credit cards",
-                                    style: _type == 1
-                                        ? TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.black,
-                                    )
-                                        : TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Image.asset(
-                              "assets/paymentproviders/visa.png",
-                              width: 120,
-                              height: 30,
-                              fit: BoxFit.cover,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  SizedBox(height: 15,),
-                  Container(
-                    width: size.width,
-                    height: 75,
-                    decoration: BoxDecoration(
-                      border: _type == 1
-                          ? Border.all(width: 1, color: const Color(0xFFDB3022))
-                          : Border.all(width: 0.3, color: Colors.grey),
-                      borderRadius: BorderRadius.circular(5),
-                      color: Colors.transparent,
-                    ),
-                    child: Center(
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 20.0),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Row(
-                                children: [
-                                  Radio(
-                                    value: 3,
-                                    groupValue: _type,
-                                    onChanged: _handleRadio,
-                                    activeColor: Color(0xFFDB3022),
-                                  ),
-                                  Text(
-                                    "BHIM/Upi",
-                                    style: _type == 1
-                                        ? TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.black,
-                                    )
-                                        : TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Image.asset(
-                              "assets/paymentproviders/bhimupi.png",
-                              width: 125,
-                              height: 30,
-                              fit: BoxFit.cover,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 15,),
-                  Container(
-                    width: size.width,
-                    height: 80,
-                    decoration: BoxDecoration(
-                      border: _type == 1
-                          ? Border.all(width: 1, color: const Color(0xFFDB3022))
-                          : Border.all(width: 0.3, color: Colors.grey),
-                      borderRadius: BorderRadius.circular(5),
-                      color: Colors.transparent,
-                    ),
-                    child: Center(
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 20.0),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Row(
-                                children: [
-                                  Radio(
-                                    value: 4,
-                                    groupValue: _type,
-                                    onChanged: _handleRadio,
-                                    activeColor: Color(0xFFDB3022),
-                                  ),
-                                  Text(
-                                    "Gpay",
-                                    style: _type == 1
-                                        ? TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.black,
-                                    )
-                                        : TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Image.asset(
-                              "assets/paymentproviders/gpay.png",
-                              width: 125,
-                              height: 30,
-                              fit: BoxFit.cover,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  SizedBox(height: 100,),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text("Sub-Total",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500,color: Colors.grey,),),
-                      Text(totbill.toString(), style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.grey,))
-                    ],
-                  ),
-                  SizedBox(height: 15,),
-                  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
-                    children: [
-                      Text("Convinience fee",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500,color: Colors.grey,),),
-                      Text("50",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500,color: Colors.grey,))
-                    ],
-                  ),
-                  Divider(height: 30,color: Colors.black,),
-
-                  Row(                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
-                    children: [
-                      Text("Total Payment",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w700,color: Colors.grey,),),
-                      Text(addedbill.toString(),style: TextStyle(fontSize: 15,fontWeight: FontWeight.w700,color: Colors.redAccent,))
-                    ],
-                  ),
-                  SizedBox(height: 70,),
-                  InkWell(
-                    onTap: () async {
-                      final username = FirebaseAuth.instance.currentUser;
-                      final docid = widget.movieid;
-                      final date = widget.date;
-                      final timeof = widget.selecttime;
-
-                      final id = docid! + timeof! + date!;
-                      print('id to be inserted is ${id.trim()}');
-
-                      final selectedSeatsString = jsonEncode(widget.seats);
-
-                      final bookingSnapshot = await FirebaseFirestore
-                          .instance
-                          .collection('bookings')
-                          .where('movieId', isEqualTo: id)
-                          .get();
-
-
-                      Future<void> handleBooking(bool isPersonalBooking) async {
-                        final snapshot = await FirebaseFirestore.instance
-                            .collection(isPersonalBooking
-                            ? 'personalbooking'
-                            : 'bookings')
-                            .where('movieId', isEqualTo: id)
-                            .where('username', isEqualTo: username!.email.toString())
-                            .get();
-
-                        if (snapshot.docs.isNotEmpty) {
-                          final existingDoc = snapshot.docs.first;
-                          final existingId = existingDoc.id;
-                          final existingSeats = existingDoc['selectedSeats'] as String;
-                          final List<dynamic> updatedSeatsList = jsonDecode(existingSeats);
-                          updatedSeatsList.addAll(widget.seats);
-
-                          await FirebaseFirestore.instance
-                              .collection(isPersonalBooking
-                              ? 'personalbooking'
-                              : 'bookings')
-                              .doc(existingId)
-                              .update({'selectedSeats': jsonEncode(updatedSeatsList)});
-                        } else {
-                          final bookingData = {
-                            'username': username!.email.toString(),
-                            'movieId': id,
-                            'date': date,
-                            'nameoftheuser':nameoftheuser,
-                            'movieSearchId':widget.movieid,
-                            'movieName': widget.moviename,
-                            'timeof': timeof,
-                            'cinemaName': widget.cinemaname,
-                            'totalCharge': widget.amount,
-                            'selectedSeats': selectedSeatsString,
-                            'seatingArrangement':widget.seatingArr.toString()
-                          };
-
-                          await FirebaseFirestore.instance
-                              .collection(isPersonalBooking
-                              ? 'personalbooking'
-                              : 'bookings')
-                              .add(bookingData);
-                        }
-
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: Text(isPersonalBooking
-                                  ? 'Booking Updated'
-                                  : 'Booking Successful'),
-                              content: Text(isPersonalBooking
-                                  ? 'Your booking has been updated with the new seat information.'
-                                  : 'Your booking is successfully added and your Total is \$${widget.amount }'),
-                              actions: <Widget>[
-                                TextButton(
-                                  onPressed: () {
-
-                                    Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(builder: (context) => HomeScreen()),
-                                    );                                  },
-                                  child: Text('OK'),
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      }
-
-
-                      final isPersonalBooking = widget.amount != null;
-
-                      if (bookingSnapshot.docs.isNotEmpty) {
-                        final existingBookingDoc = bookingSnapshot.docs.first;
-                        final existingBookingId = existingBookingDoc.id;
-                        final existingSeats =
-                        existingBookingDoc['selectedSeats'] as String;
-                        final List<dynamic> updatedSeatsList = jsonDecode(existingSeats);
-                        updatedSeatsList.addAll(widget.seats);
-
-                        await FirebaseFirestore.instance
-                            .collection('bookings')
-                            .doc(existingBookingId)
-                            .update({'selectedSeats': jsonEncode(updatedSeatsList)});
-
-                        await handleBooking(isPersonalBooking);
-                      } else {
-                        var seatingarr=widget.seatingArr;
-
-                        final bookingData = {'movieId': id, 'selectedSeats': selectedSeatsString,'seatingArrangement':seatingarr.toString()};
-                        await FirebaseFirestore.instance
-                            .collection('bookings')
-                            .add(bookingData);
-
-                        await handleBooking(isPersonalBooking);
-                      }
-                    },
-
-                    child: Container(
+          child: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Center(
+                child: Column(
+                  children: [
+                    SizedBox(height: 40,),
+                    Container(
+                      width: size.width,
+                      height: 70,
                       decoration: BoxDecoration(
+                        border: _type == 1
+                            ? Border.all(width: 1, color: const Color(0xFFDB3022))
+                            : Border.all(width: 0.3, color: Colors.grey),
                         borderRadius: BorderRadius.circular(5),
-                        color: Color(0xFFDB3022), // Red color from the image
+                        color: Colors.transparent,
                       ),
-                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                       child: Center(
-                        child: Text(
-                          "Confirm Payment",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 20.0),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Row(
+                                  children: [
+                                    Radio(
+                                      value: 1,
+                                      groupValue: _type,
+                                      onChanged: _handleRadio,
+                                      activeColor: Color(0xFFDB3022),
+                                    ),
+                                    Text(
+                                      "Amazon Pay",
+                                      style: _type == 1
+                                          ? TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.black,
+                                      )
+                                          : TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Image.asset(
+                                "assets/paymentproviders/amazonpay.png",
+                                width: 120,
+                                height: 22,
+                                fit: BoxFit.cover,
+                              ),
+                            ],
                           ),
                         ),
                       ),
                     ),
-                  )
-                ],
 
+                    SizedBox(height: 15,),
+                    Container(
+                      width: size.width,
+                      height: 70,
+                      decoration: BoxDecoration(
+                        border: _type == 1
+                            ? Border.all(width: 1, color: const Color(0xFFDB3022))
+                            : Border.all(width: 0.3, color: Colors.grey),
+                        borderRadius: BorderRadius.circular(5),
+                        color: Colors.transparent,
+                      ),
+                      child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 20.0),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Row(
+                                  children: [
+                                    Radio(
+                                      value: 2,
+                                      groupValue: _type,
+                                      onChanged: _handleRadio,
+                                      activeColor: Color(0xFFDB3022),
+                                    ),
+                                    Text(
+                                      "Debit/Credit cards",
+                                      style: _type == 1
+                                          ? TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.black,
+                                      )
+                                          : TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Image.asset(
+                                "assets/paymentproviders/visa.png",
+                                width: 120,
+                                height: 40,
+                                fit: BoxFit.cover,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(height: 15,),
+                    Container(
+                      width: size.width,
+                      height: 70,
+                      decoration: BoxDecoration(
+                        border: _type == 1
+                            ? Border.all(width: 1, color: const Color(0xFFDB3022))
+                            : Border.all(width: 0.3, color: Colors.grey),
+                        borderRadius: BorderRadius.circular(5),
+                        color: Colors.transparent,
+                      ),
+                      child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 20.0),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Row(
+                                  children: [
+                                    Radio(
+                                      value: 3,
+                                      groupValue: _type,
+                                      onChanged: _handleRadio,
+                                      activeColor: Color(0xFFDB3022),
+                                    ),
+                                    Text(
+                                      "BHIM/Upi",
+                                      style: _type == 1
+                                          ? TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.black,
+                                      )
+                                          : TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Image.asset(
+                                "assets/paymentproviders/bhim.png",
+                                width: 140,
+                                height: 50,
+                                fit: BoxFit.cover,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 15,),
+                    Container(
+                      width: size.width,
+                      height: 80,
+                      decoration: BoxDecoration(
+                        border: _type == 1
+                            ? Border.all(width: 1, color: const Color(0xFFDB3022))
+                            : Border.all(width: 0.3, color: Colors.grey),
+                        borderRadius: BorderRadius.circular(5),
+                        color: Colors.transparent,
+                      ),
+                      child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 20.0),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Row(
+                                  children: [
+                                    Radio(
+                                      value: 4,
+                                      groupValue: _type,
+                                      onChanged: _handleRadio,
+                                      activeColor: Color(0xFFDB3022),
+                                    ),
+                                    Text(
+                                      "Gpay",
+                                      style: _type == 1
+                                          ? TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.black,
+                                      )
+                                          : TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Image.asset(
+                                "assets/paymentproviders/gpay.png",
+                                width: 125,
+                                height: 40,
+                                fit: BoxFit.cover,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(height: 100,),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text("Sub-Total",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500,color: Colors.grey,),),
+                        Text(totbill.toString(), style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.grey,))
+                      ],
+                    ),
+                    SizedBox(height: 15,),
+                    Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
+                      children: [
+                        Text("Convinience fee",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500,color: Colors.grey,),),
+                        Text("50",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500,color: Colors.grey,))
+                      ],
+                    ),
+                    Divider(height: 30,color: Colors.black,),
+
+                    Row(                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
+                      children: [
+                        Text("Total Payment",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w700,color: Colors.grey,),),
+                        Text(addedbill.toString(),style: TextStyle(fontSize: 15,fontWeight: FontWeight.w700,color: Colors.redAccent,))
+                      ],
+                    ),
+                    SizedBox(height: 70,),
+                    InkWell(
+                      onTap: () async {
+                        final username = FirebaseAuth.instance.currentUser;
+                        final docid = widget.movieid;
+                        final date = widget.date;
+                        final timeof = widget.selecttime;
+
+                        final id = docid! + timeof! + date!;
+                        print('id to be inserted is ${id.trim()}');
+
+                        final selectedSeatsString = jsonEncode(widget.seats);
+
+                        final bookingSnapshot = await FirebaseFirestore
+                            .instance
+                            .collection('bookings')
+                            .where('movieId', isEqualTo: id)
+                            .get();
+
+
+                        Future<void> handleBooking(bool isPersonalBooking) async {
+                          final snapshot = await FirebaseFirestore.instance
+                              .collection(isPersonalBooking
+                              ? 'personalbooking'
+                              : 'bookings')
+                              .where('movieId', isEqualTo: id)
+                              .where('username', isEqualTo: username!.email.toString())
+                              .get();
+
+                          if (snapshot.docs.isNotEmpty) {
+                            final existingDoc = snapshot.docs.first;
+                            final existingId = existingDoc.id;
+                            final existingSeats = existingDoc['selectedSeats'] as String;
+                            final List<dynamic> updatedSeatsList = jsonDecode(existingSeats);
+                            updatedSeatsList.addAll(widget.seats);
+
+                            await FirebaseFirestore.instance
+                                .collection(isPersonalBooking
+                                ? 'personalbooking'
+                                : 'bookings')
+                                .doc(existingId)
+                                .update({'selectedSeats': jsonEncode(updatedSeatsList)});
+                          } else {
+                            final bookingData = {
+                              'username': username!.email.toString(),
+                              'movieId': id,
+                              'date': date,
+                              'nameoftheuser':nameoftheuser,
+                              'movieSearchId':widget.movieid,
+                              'movieName': widget.moviename,
+                              'timeof': timeof,
+                              'cinemaName': widget.cinemaname,
+                              'totalCharge': widget.amount,
+                              'selectedSeats': selectedSeatsString,
+                              'seatingArrangement':widget.seatingArr.toString()
+                            };
+
+                            await FirebaseFirestore.instance
+                                .collection(isPersonalBooking
+                                ? 'personalbooking'
+                                : 'bookings')
+                                .add(bookingData);
+                          }
+
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text(isPersonalBooking
+                                    ? 'Booking Updated'
+                                    : 'Booking Successful'),
+                                content: Text(isPersonalBooking
+                                    ? 'Your booking has been updated with the new seat information.'
+                                    : 'Your booking is successfully added and your Total is \$${widget.amount }'),
+                                actions: <Widget>[
+                                  TextButton(
+                                    onPressed: () {
+
+                                      Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(builder: (context) => HomeScreen()),
+                                      );                                  },
+                                    child: Text('OK'),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        }
+
+
+                        final isPersonalBooking = widget.amount != null;
+
+                        if (bookingSnapshot.docs.isNotEmpty) {
+                          final existingBookingDoc = bookingSnapshot.docs.first;
+                          final existingBookingId = existingBookingDoc.id;
+                          final existingSeats =
+                          existingBookingDoc['selectedSeats'] as String;
+                          final List<dynamic> updatedSeatsList = jsonDecode(existingSeats);
+                          updatedSeatsList.addAll(widget.seats);
+
+                          await FirebaseFirestore.instance
+                              .collection('bookings')
+                              .doc(existingBookingId)
+                              .update({'selectedSeats': jsonEncode(updatedSeatsList)});
+
+                          await handleBooking(isPersonalBooking);
+                        } else {
+                          var seatingarr=widget.seatingArr;
+
+                          final bookingData = {'movieId': id, 'selectedSeats': selectedSeatsString,'seatingArrangement':seatingarr.toString()};
+                          await FirebaseFirestore.instance
+                              .collection('bookings')
+                              .add(bookingData);
+
+                          await handleBooking(isPersonalBooking);
+                        }
+                      },
+
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          color: Color(0xFFDB3022), // Red color from the image
+                        ),
+                        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                        child: Center(
+                          child: Text(
+                            "Confirm Payment",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+
+                ),
               ),
             ),
           ),

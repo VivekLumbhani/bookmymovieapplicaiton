@@ -1,44 +1,72 @@
-import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:nookmyseatapplication/pages/serv.dart';
+import 'dart:convert';
 
-import 'choose.dart';
-import 'detail_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:nookmyseatapplication/pages/serv.dart';
+import 'package:nookmyseatapplication/pages/detail_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class explore extends StatefulWidget {
   const explore({Key? key}) : super(key: key);
 
   @override
-  State<explore> createState() => _GenresListState();
+  State<explore> createState() => _exploreState();
 }
 
-class _GenresListState extends State<explore> {
+class _exploreState extends State<explore> {
+  String selectedCity = '';
+
+  Future<void> loadSelectedCity() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      selectedCity = prefs.getString("selectedCity") ?? "";
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadSelectedCity();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
       backgroundColor: Colors.white,
-      body: Container(
-        padding: EdgeInsets.all(8),
-        child: FutureBuilder<QuerySnapshot>(
-          future: FirebaseFirestore.instance.collection('buscollections').get(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
-            }
+      body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Container(
+          padding: EdgeInsets.all(8),
+          child: FutureBuilder<QuerySnapshot>(
+            future: FirebaseFirestore.instance.collection('buscollections').get(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              }
 
-            if (snapshot.hasError) {
-              return Center(child: Text('Error: ${snapshot.error}'));
-            }
+              if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              }
 
-            var itemList = snapshot.data!.docs;
+              var itemList = snapshot.data!.docs;
 
-            if (itemList.isEmpty) {
-              return Center(child: Text('No data available'));
-            }
+              if (itemList.isEmpty) {
+                return Center(child: Text('No data available'));
+              }
 
-            return SingleChildScrollView(
-              child: GridView.builder(
+              // Filter out movies whose release date is in the future and not available in the selected city
+              itemList = itemList.where((doc) {
+                var moviedet = doc.data() as Map<String, dynamic>;
+                String releaseDate = moviedet['date'] ?? '';
+                DateTime relDate = DateTime.parse(releaseDate);
+                DateTime currentDate = DateTime.now();
+                final theatersData = moviedet["theaters"] ?? "[]";
+                final theatersInSelectedCity =
+                jsonDecode(theatersData).where((theater) => theater["city"] == selectedCity).toList();
+                return !relDate.isAfter(currentDate) && theatersInSelectedCity.isNotEmpty;
+              }).toList();
+
+              return GridView.builder(
                 shrinkWrap: true, // Add this line
                 physics: NeverScrollableScrollPhysics(), // Add this line
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -47,21 +75,16 @@ class _GenresListState extends State<explore> {
                   crossAxisSpacing: 8.0,
                   childAspectRatio: 0.7, // Adjust as needed
                 ),
-
                 itemCount: itemList.length,
                 itemBuilder: (context, index) {
                   var doc = itemList[index];
                   var moviedet = doc.data() as Map<String, dynamic>;
                   String imgname = moviedet['imgname'] ?? 'Unknown seats';
                   String movieName = moviedet['movieName'] ?? 'Unknown Bus';
-                  String movieid=doc.id;
-                  double rating = double.tryParse(moviedet['rating'] ?? '0.0') ?? 0.0;
-                  String movieexpdate = moviedet['expiryDate'];
-                  String releaseDate=moviedet['date']??'';
+                  String movieid = doc.id;
 
-                  DateTime expdate = DateTime.parse(movieexpdate);
-                  DateTime relDate=DateTime.parse(releaseDate);
-                  DateTime currentDate = DateTime.now();
+                  String rating = moviedet["rating"] ?? "5";
+                  double ratings = double.parse(rating);
 
                   return FutureBuilder<String>(
                     future: serv().downloadurl(imgname),
@@ -73,20 +96,17 @@ class _GenresListState extends State<explore> {
                       } else if (!imageSnapshot.hasData) {
                         return Text('No image data available');
                       } else {
-                      if (currentDate.isBefore(expdate) && !relDate.isAfter(currentDate)) {
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             GestureDetector(
-                              onTap: (){
+                              onTap: () {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) =>
-                                          DetailScreen(movieename: movieid)),
-
+                                    builder: (context) => DetailScreen(movieename: movieid),
+                                  ),
                                 );
-
                               },
                               child: SizedBox(
                                 width: double.infinity,
@@ -104,11 +124,14 @@ class _GenresListState extends State<explore> {
                                   child: Text(
                                     "$movieName \t",
                                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                                    overflow: TextOverflow.ellipsis, // or TextOverflow.fade depending on your preference
+                                    overflow: TextOverflow.ellipsis,
                                     maxLines: 2, // adjust as necessary
                                   ),
                                 ),
-                                Text("4.5",style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
+                                Text(
+                                  rating,
+                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                ),
                                 Icon(
                                   Icons.star,
                                   color: Colors.amber,
@@ -116,20 +139,15 @@ class _GenresListState extends State<explore> {
                                 ),
                               ],
                             ),
-
                           ],
                         );
-
-                      }else{
-                        return Container();
-                      }
                       }
                     },
                   );
                 },
-              ),
-            );
-          },
+              );
+            },
+          ),
         ),
       ),
     );

@@ -1,11 +1,12 @@
 import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:nookmyseatapplication/pages/select_seat.dart';
-import 'navbar.dart';
-import 'booking.dart'; // Import your 'booking' widget
+import 'package:shared_preferences/shared_preferences.dart';
+
+
 
 class chooseshow extends StatefulWidget {
   final String? movieename;
@@ -17,24 +18,33 @@ class chooseshow extends StatefulWidget {
 }
 
 class _ChooseShowState extends State<chooseshow> {
-  var user = FirebaseAuth.instance.currentUser;
   late TabController controller;
   String? docid;
   String? date;
+
+  String selectedCity = '';
+
+  Future<void> loadSelectedCity() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      selectedCity = prefs.getString("selectedCity") ?? "";
+    });
+  }
 
   @override
   void initState() {
     super.initState();
     docid = widget.movieename;
     fetchData();
+    loadSelectedCity();
   }
 
   var movieTitle = "";
   var datesof = "";
   var expdate = "";
   var priceofseat = "";
-  var seatingArrangement="";
-  var theater="";
+  var seatingArrangement = "";
+  var theater = "";
   List<Map<String, dynamic>> allTimeSlots = [];
 
   List<String> generateDateList(String startDate, String endDate) {
@@ -122,7 +132,7 @@ class _ChooseShowState extends State<chooseshow> {
           expdate = data['expiryDate'] ?? '';
           dateList = generateDateList(datesof, expdate);
           priceofseat = data['price'] ?? '';
-          theater=data["theaters"]??'';
+          theater = data["theaters"] ?? '';
           final theatersData = jsonDecode(data['theaters']);
           if (theatersData is List) {
             theatersList = theatersData.cast<Map<String, dynamic>>();
@@ -142,6 +152,7 @@ class _ChooseShowState extends State<chooseshow> {
   List<String> dateList = [];
 
   int current = 0;
+
   void _selectTimeSlot(String cinemaName, List<dynamic> dynamicTimes) {
     List<Map<String, dynamic>> slots = [];
 
@@ -160,8 +171,7 @@ class _ChooseShowState extends State<chooseshow> {
         DateTime currentDateTime = DateTime.now();
         String time;
 
-
-          time = DateFormat.jm().format(showTime);
+        time = DateFormat.jm().format(showTime);
 
         print("times are $time");
 
@@ -170,7 +180,6 @@ class _ChooseShowState extends State<chooseshow> {
           'time': time,
           'date': dateList[current],
         });
-
       }
     }
     print("all slots are $slots");
@@ -179,12 +188,12 @@ class _ChooseShowState extends State<chooseshow> {
       allTimeSlots = slots;
     });
   }
+
   String realforMovieTime = ''; // Declare realTime outside the loop
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       appBar: AppBar(),
       body: Container(
         width: double.infinity,
@@ -225,13 +234,10 @@ class _ChooseShowState extends State<chooseshow> {
                             width: 80,
                             height: 45,
                             decoration: BoxDecoration(
-                              color: current == index
-                                  ? Colors.red
-                                  : Colors.white54,
+                              color: current == index ? Colors.red : Colors.white54,
                               borderRadius: current == index
                                   ? BorderRadius.circular(15)
                                   : BorderRadius.circular(10),
-
                             ),
                             duration: Duration(milliseconds: 300),
                             child: Center(
@@ -239,9 +245,7 @@ class _ChooseShowState extends State<chooseshow> {
                                 dateList[index],
                                 style: TextStyle(
                                   fontWeight: FontWeight.w500,
-                                  color: current == index
-                                      ? Colors.white
-                                      : Colors.green,
+                                  color: current == index ? Colors.white : Colors.green,
                                 ),
                               ),
                             ),
@@ -253,12 +257,13 @@ class _ChooseShowState extends State<chooseshow> {
                 ),
               ),
               Column(
-                children: theatersList.map((theater) {
+                children: theatersList
+                    .where((theater) => theater['city'] == selectedCity)
+                    .map((theater) {
                   final cinemaName = theater['cinemaName'];
                   final dynamicTimes = theater['dynamicTimes'];
 
                   List<Widget> timeSlots = [];
-
 
                   if (dynamicTimes != null) {
                     for (var dynamicTime in dynamicTimes) {
@@ -273,7 +278,8 @@ class _ChooseShowState extends State<chooseshow> {
                         minute,
                       );
 
-                      if (dateList[current] == '${DateTime.now().day}/${_getMonthName(DateTime.now().month).substring(0, 3)} \n ${_getWeekdayName(DateTime.now().weekday)}' &&
+                      if (dateList[current] ==
+                          '${DateTime.now().day}/${_getMonthName(DateTime.now().month).substring(0, 3)} \n ${_getWeekdayName(DateTime.now().weekday)}' &&
                           showTime.isAfter(DateTime.now())) {
                         // Format the showTime with AM/PM
                         String realTime = DateFormat.jm().format(showTime);
@@ -281,7 +287,6 @@ class _ChooseShowState extends State<chooseshow> {
 
                         timeSlots.add(
                           GestureDetector(
-
                             child: Container(
                               width: 80,
                               height: 50.0,
@@ -309,31 +314,21 @@ class _ChooseShowState extends State<chooseshow> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => SeatSelectionScreen(
-                                      movieename: docid,
-                                      date: dateList[current],
-                                      oriname: movieTitle,
-                                      seatingArrangement: jsonEncode(theater["seatings"]),
-                                      cinemaname: cinemaName,
-                                      allTimeSlots: allTimeSlots,
-                                      selectTime:realforMovieTime
-
+                                    movieename: docid,
+                                    date: dateList[current],
+                                    oriname: movieTitle,
+                                    seatingArrangement: jsonEncode(theater["seatings"]),
+                                    cinemaname: cinemaName,
+                                    allTimeSlots: allTimeSlots,
+                                    selectTime: realforMovieTime,
                                   ),
-                                  //     bookings(
-                                  //   movieename: docid,
-                                  //   date: dateList[current],
-                                  //   timeof: realforMovieTime,
-                                  //   seatingArrangement:jsonEncode(theater['seatings']),
-                                  //   oriname: movieTitle,
-                                  //   cinemaname: cinemaName,
-                                  // ),
-
-
                                 ),
                               );
                             },
                           ),
                         );
-                      } else if (dateList[current] != '${DateTime.now().day}/${_getMonthName(DateTime.now().month).substring(0, 3)} \n ${_getWeekdayName(DateTime.now().weekday)}') {
+                      } else if (dateList[current] !=
+                          '${DateTime.now().day}/${_getMonthName(DateTime.now().month).substring(0, 3)} \n ${_getWeekdayName(DateTime.now().weekday)}') {
                         String time = DateFormat.jm().format(showTime);
 
                         timeSlots.add(
@@ -344,25 +339,15 @@ class _ChooseShowState extends State<chooseshow> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) =>     SeatSelectionScreen(
-                                      movieename: docid,
-                                      date: dateList[current],
-                                      oriname: movieTitle,
-                                      seatingArrangement: jsonEncode(theater["seatings"]),
-                                      cinemaname: cinemaName,
-                                      allTimeSlots: allTimeSlots,
-                                      selectTime:time
+                                  builder: (context) => SeatSelectionScreen(
+                                    movieename: docid,
+                                    date: dateList[current],
+                                    oriname: movieTitle,
+                                    seatingArrangement: jsonEncode(theater["seatings"]),
+                                    cinemaname: cinemaName,
+                                    allTimeSlots: allTimeSlots,
+                                    selectTime: time,
                                   ),
-                                  //     bookings(
-                                  //   movieename: docid,
-                                  //   date: dateList[current],
-                                  //   timeof: time,
-                                  //   oriname: movieTitle,
-                                  //   seatingArrangement:jsonEncode(theater["seatings"]),
-                                  //   cinemaname: cinemaName,
-                                  // ),
-                                  //
-
                                 ),
                               );
                             },

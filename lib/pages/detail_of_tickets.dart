@@ -211,11 +211,6 @@ class _TicketDetailsScreenState extends State<ticketDetailsScreen> {
             return seatString.replaceFirst(RegExp(r'^\d+'), alphabet);
           }).toList();
 
-          print("seats are $seatsInAlphabets");
-
-          print("seats are $seatsInAlphabets");
-
-          print("seats are $seatsInAlphabets");
           String formattedDate =
               "${dateTime.year}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.day.toString().padLeft(2, '0')}";
 
@@ -237,14 +232,24 @@ class _TicketDetailsScreenState extends State<ticketDetailsScreen> {
                 );
               }
 
-              final imageUrl = movieImageSnapshot.data;
+              String formattedDatee = '"${formattedDate}"';
+              String time = '"${widget.time}"';
 
+              String cinemaname='"${widget.cinemaName}"';
               var obj = {
-                "seats": "${widget.selectedSeats}",
-                "date": formattedDate,
-                "time": widget.time,
-                "venue": "${widget.cinemaName}",
+                "\"seats\"": "${widget.selectedSeats}",
+                "\"date\"": formattedDatee,
+                "\"time\"": time,
+                "\"venue\"": cinemaname,
               };
+
+
+              String jsonString = obj.toString();
+
+              print(jsonString);
+
+
+              final imageUrl = movieImageSnapshot.data;
               return // ... existing code ...
 
                   Container(
@@ -381,7 +386,7 @@ class _TicketDetailsScreenState extends State<ticketDetailsScreen> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       QrImageView(
-                                        data: obj.toString(),
+                                        data: jsonString,
                                         version: QrVersions.auto,
                                         size: 200.0,
                                       ),
