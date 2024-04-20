@@ -33,6 +33,7 @@ class _DetailScreenState extends State<DetailScreen> {
   var reviews;
   var category;
   var description;
+  var star;
   var link;
   @override
   Widget build(BuildContext context) {
@@ -89,6 +90,8 @@ class _DetailScreenState extends State<DetailScreen> {
           reviews=data["reviews"] ??"[]";
           description = data['descriptionOfMovie'] as String;
           link = data['link'] as String;
+          star = data['rating'] as String;
+
 
           return FutureBuilder<String>(
             future: serv().downloadurl(imgname),
@@ -219,7 +222,7 @@ class _DetailScreenState extends State<DetailScreen> {
                                               ),
                                               SizedBox(width: 4),
                                               Text(
-                                                "8.2",
+                                                star,
                                                 style: TextStyle(
                                                     color: Colors.black,
                                                     fontWeight:
